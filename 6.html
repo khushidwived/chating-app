@@ -35,20 +35,110 @@
     .accent-text-active { color: var(--accent-color, #1d9bf0); }
     .accent-border-active { border-color: var(--accent-color, #1d9bf0); }
     #toast-stack { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-    .toast-item { background: #1e2732; border: 1px solid #38444d; color: #f1f5f9; font-size: 12px; padding: 8px 14px; border-radius: 9999px; box-shadow: 0 4px 14px rgba(0,0,0,0.4); animation: toastIn 0.2s ease-out; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .toast-item { background: rgba(30,39,50,0.85); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; font-size: 12px; padding: 9px 16px; border-radius: 9999px; box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08); animation: toastIn 0.25s cubic-bezier(.2,.8,.2,1); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(-10px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    /* ===================== PREMIUM GLASSMORPHISM + NEUMORPHISM LAYER ===================== */
+    :root {
+      --accent-color: #1d9bf0;
+      --glass-bg: rgba(255,255,255,0.055);
+      --glass-bg-strong: rgba(255,255,255,0.09);
+      --glass-border: rgba(255,255,255,0.10);
+      --glass-border-soft: rgba(255,255,255,0.06);
+    }
+
+    #bg-orbs { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    #bg-orbs span { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.55; will-change: transform; }
+    #bg-orbs .orb-1 { width: 480px; height: 480px; top: -140px; left: -120px; background: radial-gradient(circle, var(--accent-color), transparent 70%); animation: floatOrb1 22s ease-in-out infinite; }
+    #bg-orbs .orb-2 { width: 420px; height: 420px; bottom: -160px; right: -100px; background: radial-gradient(circle, #7856ff, transparent 70%); animation: floatOrb2 26s ease-in-out infinite; }
+    #bg-orbs .orb-3 { width: 360px; height: 360px; bottom: 10%; left: 8%; background: radial-gradient(circle, #f91880, transparent 70%); animation: floatOrb3 30s ease-in-out infinite; opacity: 0.35; }
+    #bg-orbs .grain { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
+    @keyframes floatOrb1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(60px,80px) scale(1.15); } }
+    @keyframes floatOrb2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-50px,-60px) scale(1.1); } }
+    @keyframes floatOrb3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(40px,-40px) scale(1.2); } }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid var(--glass-border-soft);
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+    }
+    .glass-card:hover { border-color: rgba(255,255,255,0.16); }
+    .glass-strong {
+      background: rgba(15,17,22,0.72);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .glass-input {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .glass-input:focus { border-color: var(--accent-color); box-shadow: inset 0 2px 6px rgba(0,0,0,0.35), 0 0 0 3px rgba(29,155,240,0.25); background: rgba(255,255,255,0.07); }
+
+    .neu-btn {
+      background: linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 6px 6px 16px rgba(0,0,0,0.45), -4px -4px 12px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .neu-btn:hover { box-shadow: 8px 8px 20px rgba(0,0,0,0.5), -5px -5px 14px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.1); }
+    .neu-btn:active { transform: scale(.97); box-shadow: inset 4px 4px 10px rgba(0,0,0,0.45), inset -3px -3px 8px rgba(255,255,255,0.04); }
+
+    .neu-accent {
+      background: linear-gradient(145deg, #3fb0f7, var(--accent-color));
+      box-shadow: 0 6px 18px rgba(29,155,240,0.45), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 6px rgba(0,0,0,0.15);
+      border: 1px solid rgba(29,155,240,0.6);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+    .neu-accent:hover { filter: brightness(1.08); box-shadow: 0 8px 22px rgba(29,155,240,0.55), inset 0 1px 0 rgba(255,255,255,0.4); }
+    .neu-accent:active { transform: scale(.96); }
+
+    .glass-pill { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); }
+    .glass-icon-btn { transition: background .18s ease, transform .15s ease; }
+    .glass-icon-btn:hover { background: rgba(29,155,240,0.14); transform: translateY(-1px); }
+
+    .photo-drop {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+      border: 1.5px dashed rgba(255,255,255,0.18);
+      transition: border-color .2s ease, background .2s ease, transform .15s ease;
+      cursor: pointer;
+    }
+    .photo-drop:hover { border-color: var(--accent-color); background: rgba(29,155,240,0.10); }
+    .photo-drop.drag-over { border-color: var(--accent-color); background: rgba(29,155,240,0.16); transform: scale(1.01); }
+    .avatar-ring { box-shadow: 0 0 0 3px rgba(255,255,255,0.08), 0 8px 20px rgba(0,0,0,0.4); }
+    .upload-progress-track { background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; height: 4px; }
+    .upload-progress-bar { height: 100%; background: var(--accent-color); border-radius: 999px; transition: width .2s ease; }
   </style>
 </head>
 <body class="bg-black text-gray-100 transition-colors duration-200 overflow-x-hidden font-sans">
 
+  <div id="bg-orbs"><span class="orb-1"></span><span class="orb-2"></span><span class="orb-3"></span><div class="grain"></div></div>
+
   <div id="toast-stack"></div>
 
   <!-- ============ FOLLOW LIST OVERLAY (Followers / Following) ============ -->
-  <div id="follow-list-overlay" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4" onclick="closeFollowListModal(event)">
-    <div class="w-full max-w-sm bg-black border border-zinc-800 rounded-2xl max-h-[80vh] flex flex-col" onclick="event.stopPropagation()">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+  <div id="follow-list-overlay" class="hidden fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeFollowListModal(event)">
+    <div class="w-full max-w-sm glass-strong rounded-2xl max-h-[80vh] flex flex-col" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <span id="follow-list-title" class="font-bold text-white">Following</span>
-        <button onclick="closeFollowListModal(event, true)" class="p-1.5 rounded-full hover:bg-zinc-900 text-zinc-400 hover:text-white">
+        <button onclick="closeFollowListModal(event, true)" class="p-1.5 rounded-full glass-icon-btn text-zinc-400 hover:text-white">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -57,55 +147,69 @@
       </div>
     </div>
   </div>
-  <div id="story-viewer-overlay" class="hidden fixed inset-0 z-[150] bg-black flex items-center justify-center p-4" onclick="closeStoryViewer(event)">
+  <div id="story-viewer-overlay" class="hidden fixed inset-0 z-[150] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeStoryViewer(event)">
     <div class="w-full max-w-sm">
       <div class="flex items-center gap-2 mb-2 px-1">
-        <img id="story-viewer-avatar" src="" alt="" class="w-8 h-8 rounded-full object-cover border border-zinc-700" />
+        <img id="story-viewer-avatar" src="" alt="" class="w-8 h-8 rounded-full object-cover avatar-ring" />
         <span id="story-viewer-username" class="text-sm font-bold text-white"></span>
         <button onclick="closeStoryViewer(event, true)" class="ml-auto text-zinc-400 hover:text-white p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <div class="w-full aspect-square bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800">
+      <div class="w-full aspect-square glass-card overflow-hidden">
         <img id="story-viewer-image" src="" alt="story" class="w-full h-full object-cover" onclick="event.stopPropagation()" />
       </div>
     </div>
   </div>
 
   <!-- ============ AUTH OVERLAY (shown until signed in) ============ -->
-  <div id="auth-overlay" class="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4">
+  <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="w-full max-w-sm">
       <div class="text-center mb-6">
-        <span class="text-4xl text-sky-500 font-bold">𝕏</span>
-        <h1 class="text-2xl font-black mt-2">Horizon</h1>
-        <p class="text-zinc-500 text-sm mt-1">Sign in to post, like, and chat live with everyone else here.</p>
+        <span class="text-4xl text-sky-500 font-bold drop-shadow-[0_0_18px_rgba(29,155,240,0.6)]">𝕏</span>
+        <h1 class="text-2xl font-black mt-2 tracking-tight">Horizon</h1>
+        <p class="text-zinc-400 text-sm mt-1">Sign in to post, like, and chat live with everyone else here.</p>
       </div>
 
-      <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-5">
+      <div class="glass-strong rounded-3xl p-5">
         <div id="auth-error" class="hidden mb-3 text-xs text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-2"></div>
 
         <form id="signin-form" class="flex flex-col gap-3">
-          <input id="signin-email" type="email" autocomplete="email" required placeholder="Email" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <input id="signin-password" type="password" autocomplete="current-password" required placeholder="Password" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <button type="submit" id="signin-submit-btn" class="py-3 rounded-full font-bold bg-sky-500 hover:bg-sky-600 transition text-sm">Sign in</button>
+          <input id="signin-email" type="email" autocomplete="email" required placeholder="Email" class="glass-input p-3 rounded-xl outline-none text-sm" />
+          <input id="signin-password" type="password" autocomplete="current-password" required placeholder="Password" class="glass-input p-3 rounded-xl outline-none text-sm" />
+          <button type="submit" id="signin-submit-btn" class="neu-accent py-3 rounded-full font-bold text-white transition text-sm">Sign in</button>
         </form>
 
         <form id="signup-form" class="hidden flex-col gap-3">
-          <input id="signup-name" required placeholder="Full name" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <input id="signup-username" required placeholder="Username (no spaces or @)" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <input id="signup-email" type="email" autocomplete="email" required placeholder="Email" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <input id="signup-password" type="password" autocomplete="new-password" required placeholder="Password (6+ characters)" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <input id="signup-avatar" placeholder="Avatar image URL (optional)" class="p-3 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <button type="submit" id="signup-submit-btn" class="py-3 rounded-full font-bold bg-sky-500 hover:bg-sky-600 transition text-sm">Create account</button>
+          <input id="signup-name" required placeholder="Full name" class="glass-input p-3 rounded-xl outline-none text-sm" />
+          <input id="signup-username" required placeholder="Username (no spaces or @)" class="glass-input p-3 rounded-xl outline-none text-sm" />
+          <input id="signup-email" type="email" autocomplete="email" required placeholder="Email" class="glass-input p-3 rounded-xl outline-none text-sm" />
+          <input id="signup-password" type="password" autocomplete="new-password" required placeholder="Password (6+ characters)" class="glass-input p-3 rounded-xl outline-none text-sm" />
+
+          <div class="flex items-center gap-3">
+            <div class="relative w-14 h-14 shrink-0">
+              <img id="signup-avatar-preview" src="" alt="" class="hidden w-14 h-14 rounded-full object-cover avatar-ring" />
+              <div id="signup-avatar-placeholder" class="w-14 h-14 rounded-full glass flex items-center justify-center text-zinc-400">
+                <i data-lucide="user" class="w-6 h-6"></i>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('signup-avatar-file').click()" class="flex-1 photo-drop rounded-xl py-2.5 px-3 text-xs text-zinc-300 flex items-center justify-center gap-2">
+              <i data-lucide="image-plus" class="w-4 h-4"></i>
+              <span id="signup-avatar-filename">Choose profile photo (optional, max 7MB)</span>
+            </button>
+            <input type="file" id="signup-avatar-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'signup')" />
+          </div>
+
+          <button type="submit" id="signup-submit-btn" class="neu-accent py-3 rounded-full font-bold text-white transition text-sm">Create account</button>
         </form>
 
         <div class="relative flex py-4 items-center">
-          <div class="flex-grow border-t border-zinc-800"></div>
+          <div class="flex-grow border-t border-white/10"></div>
           <span class="flex-shrink-0 mx-4 text-zinc-500 text-xs">or</span>
-          <div class="flex-grow border-t border-zinc-800"></div>
+          <div class="flex-grow border-t border-white/10"></div>
         </div>
 
-        <button type="button" onclick="handleGoogleSignIn()" id="google-signin-btn" class="w-full py-3 rounded-full font-bold bg-white text-black hover:bg-gray-200 transition text-sm flex items-center justify-center gap-2">
+        <button type="button" onclick="handleGoogleSignIn()" id="google-signin-btn" class="w-full py-3 rounded-full font-bold glass-card text-white hover:brightness-110 transition text-sm flex items-center justify-center gap-2">
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -125,12 +229,12 @@
   </div>
 
   <!-- ============ MAIN APP (hidden until signed in) ============ -->
-  <div id="app-root" class="hidden">
+  <div id="app-root" class="hidden relative z-10">
 
   <div class="min-h-screen flex justify-center max-w-7xl mx-auto">
 
     <!-- LEFT SIDEBAR (Desktop) -->
-    <aside class="fixed md:sticky top-0 h-screen w-20 xl:w-64 flex flex-col justify-between py-4 px-2 xl:px-4 border-r border-zinc-800 hidden md:flex z-40 shrink-0">
+    <aside class="fixed md:sticky top-0 h-screen w-20 xl:w-64 flex flex-col justify-between py-4 px-2 xl:px-4 glass border-r-0 hidden md:flex z-40 shrink-0">
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-3 px-3 py-2 text-2xl font-black tracking-tighter">
           <span class="text-3xl text-sky-500 font-bold" id="sidebar-logo">𝕏</span>
@@ -138,59 +242,59 @@
         </div>
 
         <nav class="mt-4 flex flex-col gap-1" id="desktop-nav">
-          <button onclick="switchTab('home')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900 text-sky-500 font-bold" data-tab="home">
+          <button onclick="switchTab('home')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10 text-sky-500 font-bold" data-tab="home">
             <i data-lucide="home" class="w-6 h-6"></i>
             <span class="hidden xl:inline">Home</span>
           </button>
-          <button onclick="switchTab('explore')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900" data-tab="explore">
+          <button onclick="switchTab('explore')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10" data-tab="explore">
             <i data-lucide="hash" class="w-6 h-6"></i>
             <span class="hidden xl:inline">Explore</span>
           </button>
-          <button onclick="switchTab('notifications')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900 relative" data-tab="notifications">
+          <button onclick="switchTab('notifications')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10 relative" data-tab="notifications">
             <i data-lucide="bell" class="w-6 h-6"></i>
             <span class="absolute top-2 left-8 w-2 h-2 bg-red-500 rounded-full"></span>
             <span class="hidden xl:inline">Notifications</span>
           </button>
-          <button onclick="switchTab('messages')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900 relative" data-tab="messages">
+          <button onclick="switchTab('messages')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10 relative" data-tab="messages">
             <i data-lucide="mail" class="w-6 h-6"></i>
             <span class="hidden xl:inline">Messages</span>
           </button>
-          <button onclick="switchTab('bookmarks')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900" data-tab="bookmarks">
+          <button onclick="switchTab('bookmarks')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10" data-tab="bookmarks">
             <i data-lucide="bookmark" class="w-6 h-6"></i>
             <span class="hidden xl:inline">Bookmarks</span>
           </button>
-          <button onclick="switchTab('profile')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900" data-tab="profile">
+          <button onclick="switchTab('profile')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10" data-tab="profile">
             <i data-lucide="user" class="w-6 h-6"></i>
             <span class="hidden xl:inline">Profile</span>
           </button>
-          <button onclick="switchTab('settings')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-zinc-900" data-tab="settings">
+          <button onclick="switchTab('settings')" class="nav-btn flex items-center gap-4 px-4 py-3 rounded-full text-lg font-medium transition-all hover:bg-white/10" data-tab="settings">
             <i data-lucide="settings" class="w-6 h-6"></i>
             <span class="hidden xl:inline">Customize</span>
           </button>
         </nav>
 
-        <button onclick="switchTab('home')" class="w-full mt-4 py-3 rounded-full font-bold text-white shadow-lg transition-transform active:scale-95 flex items-center justify-center bg-sky-500 hover:bg-sky-600" id="post-btn-accent">
+        <button onclick="switchTab('home')" class="w-full mt-4 py-3 rounded-full font-bold text-white transition-transform active:scale-95 flex items-center justify-center neu-accent" id="post-btn-accent">
           <span class="hidden xl:inline">Post</span>
           <i data-lucide="sparkles" class="inline xl:hidden w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="flex items-center justify-between p-3 rounded-full bg-zinc-900" id="user-pill">
+      <div class="flex items-center justify-between p-3 rounded-full glass-card" id="user-pill">
         <div class="flex items-center gap-2 min-w-0">
-          <img id="sidebar-user-avatar" src="" alt="You" class="w-10 h-10 rounded-full object-cover shrink-0" />
+          <img id="sidebar-user-avatar" src="" alt="You" class="w-10 h-10 rounded-full object-cover shrink-0 avatar-ring" />
           <div class="hidden xl:flex flex-col text-left min-w-0">
             <span id="sidebar-user-name" class="font-bold text-sm leading-tight truncate">Loading...</span>
             <span id="sidebar-user-username" class="text-xs text-zinc-400 truncate">@...</span>
           </div>
         </div>
-        <button onclick="handleSignOutClick()" title="Sign out" class="p-1.5 rounded-full hover:bg-zinc-800 shrink-0">
+        <button onclick="handleSignOutClick()" title="Sign out" class="p-1.5 rounded-full glass-icon-btn shrink-0">
           <i data-lucide="log-out" class="text-zinc-400 w-4 h-4"></i>
         </button>
       </div>
     </aside>
 
     <!-- MOBILE STICKY HEADER -->
-    <header class="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4 border-b border-zinc-800 bg-black/90 backdrop-blur-md w-full" id="mobile-header">
+    <header class="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4 glass w-full" id="mobile-header">
       <div class="flex items-center gap-3">
         <button onclick="toggleMobileSidebar(true)">
           <img id="mobile-header-avatar" src="" alt="You" class="w-8 h-8 rounded-full border border-zinc-600 object-cover" />
@@ -209,7 +313,7 @@
 
     <!-- MOBILE SIDEBAR OVERLAY DRAWER -->
     <div id="mobile-drawer" class="fixed inset-0 bg-black/60 z-50 flex hidden">
-      <div class="w-4/5 max-w-sm bg-black h-full p-5 flex flex-col justify-between shadow-2xl transition-transform duration-200 transform -translate-x-full" id="mobile-drawer-content">
+      <div class="w-4/5 max-w-sm glass-strong h-full p-5 flex flex-col justify-between shadow-2xl transition-transform duration-200 transform -translate-x-full" id="mobile-drawer-content">
         <div>
           <div class="flex items-center justify-between mb-6">
             <span class="font-bold text-lg">Account Info</span>
@@ -229,34 +333,34 @@
           </div>
 
           <div class="flex flex-col gap-1">
-            <button onclick="switchTab('home'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('home'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="home" class="w-5 h-5"></i> Home
             </button>
-            <button onclick="switchTab('explore'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('explore'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="hash" class="w-5 h-5"></i> Explore
             </button>
-            <button onclick="switchTab('notifications'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('notifications'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="bell" class="w-5 h-5"></i> Notifications
             </button>
-            <button onclick="switchTab('messages'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('messages'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="mail" class="w-5 h-5"></i> Messages
             </button>
-            <button onclick="switchTab('bookmarks'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('bookmarks'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="bookmark" class="w-5 h-5"></i> Bookmarks
             </button>
-            <button onclick="switchTab('profile'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('profile'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="user" class="w-5 h-5"></i> Profile
             </button>
-            <button onclick="switchTab('settings'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900">
+            <button onclick="switchTab('settings'); toggleMobileSidebar(false);" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10">
               <i data-lucide="settings" class="w-5 h-5"></i> Customize
             </button>
-            <button onclick="handleSignOutClick()" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-zinc-900 text-red-400">
+            <button onclick="handleSignOutClick()" class="flex items-center gap-4 py-3 px-2 rounded-lg text-left text-md font-medium hover:bg-white/10 text-red-400">
               <i data-lucide="log-out" class="w-5 h-5"></i> Sign out
             </button>
           </div>
         </div>
 
-        <div class="p-3 rounded-lg bg-zinc-900 mb-8 text-center">
+        <div class="p-3 rounded-lg glass-card mb-8 text-center">
           <span class="text-xs font-bold text-zinc-500">𝕏 Horizon - Live Multi-user Edition</span>
         </div>
       </div>
@@ -264,60 +368,67 @@
     </div>
 
     <!-- MAIN CENTER TIMELINE & TABS -->
-    <main class="flex-1 border-r border-zinc-800 min-h-screen pt-16 md:pt-0 pb-20 md:pb-6 max-w-2xl w-full">
+    <main class="flex-1 border-r border-white/10 min-h-screen pt-16 md:pt-0 pb-20 md:pb-6 max-w-2xl w-full">
 
       <!-- TAB 1: HOME -->
       <section id="tab-home" class="tab-content">
-        <div class="sticky top-0 md:top-0 z-20 backdrop-blur-md bg-black/85 border-b border-zinc-800" id="feed-header">
+        <div class="sticky top-0 md:top-0 z-20 glass border-x-0 border-t-0" id="feed-header">
           <div class="flex items-center justify-between px-4 py-3">
             <h1 class="text-xl font-bold">Home</h1>
             <i data-lucide="sparkles" class="text-sky-500 w-5 h-5" id="home-sparkles"></i>
           </div>
           <div class="flex text-center font-bold text-sm">
-            <button onclick="toggleFeedFilter('for_you')" class="flex-1 py-3.5 hover:bg-zinc-500/10 transition relative" id="feed-filter-foryou">
+            <button onclick="toggleFeedFilter('for_you')" class="flex-1 py-3.5 hover:bg-white/5 transition relative" id="feed-filter-foryou">
               <span class="text-white font-black text-current">For You</span>
               <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 rounded-full bg-sky-500" id="foryou-indicator"></span>
             </button>
-            <button onclick="toggleFeedFilter('following')" class="flex-1 py-3.5 hover:bg-zinc-500/10 transition relative text-zinc-400" id="feed-filter-following">
+            <button onclick="toggleFeedFilter('following')" class="flex-1 py-3.5 hover:bg-white/5 transition relative text-zinc-400" id="feed-filter-following">
               <span class="font-semibold">Following</span>
               <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full bg-sky-500 hidden" id="following-indicator"></span>
             </button>
           </div>
         </div>
 
-        <div id="stories-tray" class="flex gap-4 overflow-x-auto px-4 py-3 border-b border-zinc-800 scrollbar-hide">
-          <button onclick="promptStoryUpload()" class="flex flex-col items-center gap-1 shrink-0">
-            <div class="w-16 h-16 rounded-full border-2 border-dashed border-zinc-600 flex items-center justify-center bg-zinc-900">
+        <div id="stories-tray" class="flex gap-4 overflow-x-auto px-4 py-3 border-b border-white/10 scrollbar-hide">
+          <button onclick="document.getElementById('story-image-file').click()" class="flex flex-col items-center gap-1 shrink-0">
+            <div class="w-16 h-16 rounded-full photo-drop flex items-center justify-center">
               <i data-lucide="plus" class="w-6 h-6 text-zinc-400"></i>
             </div>
             <span class="text-[10px] text-zinc-400">Add Story</span>
           </button>
+          <input type="file" id="story-image-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'story')" />
           <div id="active-stories" class="flex gap-4"></div>
         </div>
 
-        <div class="p-4 border-b border-zinc-800 flex gap-3">
-          <img id="composer-avatar" src="" alt="you" class="w-10 h-10 rounded-full object-cover" />
+        <div class="p-4 border-b border-white/10 flex gap-3">
+          <img id="composer-avatar" src="" alt="you" class="w-10 h-10 rounded-full object-cover avatar-ring" />
           <div class="flex-1 flex flex-col gap-3">
             <textarea id="composer-text" placeholder="What is happening?!" class="w-full bg-transparent resize-none border-none outline-none focus:ring-0 text-lg py-1 placeholder:text-zinc-500" rows="2"></textarea>
-            <div id="image-composer-input-container" class="hidden flex gap-2 items-center">
-              <input type="text" id="composer-image-url" placeholder="Paste image URL here..." class="flex-1 text-xs p-2 rounded-md bg-zinc-900 border border-zinc-800 text-white outline-none" />
-              <button onclick="toggleImageUrlField(false)" class="text-xs text-red-400 font-bold px-2 py-1">Cancel</button>
-            </div>
-            <div class="flex items-center justify-between border-t border-zinc-800/40 pt-3">
-              <div class="flex items-center gap-1">
-                <button onclick="toggleImageUrlField(true)" class="p-2 rounded-full hover:bg-sky-500/10 text-sky-500 transition-colors" title="Add Image" id="btn-composer-img">
-                  <i data-lucide="image" class="w-5 h-5"></i>
+            <div id="image-composer-input-container" class="hidden flex-col gap-2">
+              <div class="relative w-full max-w-xs rounded-2xl overflow-hidden glass-card">
+                <img id="composer-image-preview" src="" alt="Selected photo" class="w-full max-h-56 object-cover" />
+                <button type="button" onclick="cancelPostImage()" class="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm" title="Remove photo">
+                  <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
-                <button class="p-2 rounded-full hover:bg-sky-500/10 text-sky-500 transition-colors" title="Emoji" id="btn-composer-emoji">
+              </div>
+              <span class="text-[10px] text-zinc-500">From your device gallery · max 7MB</span>
+            </div>
+            <input type="file" id="composer-image-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'post')" />
+            <div class="flex items-center justify-between border-t border-white/10 pt-3">
+              <div class="flex items-center gap-1">
+                <button type="button" onclick="document.getElementById('composer-image-file').click()" class="p-2 rounded-full glass-icon-btn text-sky-500 transition-colors" title="Add photo from gallery" id="btn-composer-img">
+                  <i data-lucide="image-plus" class="w-5 h-5"></i>
+                </button>
+                <button class="p-2 rounded-full glass-icon-btn text-sky-500 transition-colors" title="Emoji" id="btn-composer-emoji">
                   <i data-lucide="smile" class="w-5 h-5"></i>
                 </button>
               </div>
-              <button onclick="createNewTweet()" class="px-5 py-1.5 rounded-full font-bold text-white bg-sky-500 hover:bg-sky-600 transition active:scale-95" id="btn-post-submit">Post</button>
+              <button onclick="createNewTweet()" class="px-5 py-1.5 rounded-full font-bold text-white neu-accent transition active:scale-95" id="btn-post-submit">Post</button>
             </div>
           </div>
         </div>
 
-        <div id="timeline-stream" class="divide-y divide-zinc-800/60">
+        <div id="timeline-stream" class="divide-y divide-white/10">
           <div class="p-8 text-center text-zinc-500 text-sm">Connecting to live feed...</div>
         </div>
       </section>
@@ -326,19 +437,19 @@
       <section id="tab-explore" class="tab-content hidden p-4">
         <div class="relative mb-6">
           <i data-lucide="search" class="absolute left-4 top-3.5 text-zinc-500 w-5 h-5"></i>
-          <input type="text" id="explore-search-input" onkeyup="filterTrendsBySearch()" placeholder="Search Trend hashtags, topics..." class="w-full py-3 pl-12 pr-4 rounded-full bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-white" />
+          <input type="text" id="explore-search-input" onkeyup="filterTrendsBySearch()" placeholder="Search Trend hashtags, topics..." class="w-full py-3 pl-12 pr-4 rounded-full glass-input outline-none text-white" />
         </div>
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
           Trends for you <i data-lucide="sparkles" class="text-sky-500 w-5 h-5" id="explore-sparkles"></i>
         </h2>
-        <div id="trends-container" class="divide-y divide-zinc-800 rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-950/40"></div>
+        <div id="trends-container" class="divide-y divide-white/10 glass-card overflow-hidden"></div>
       </section>
 
       <!-- TAB 3: NOTIFICATIONS -->
       <section id="tab-notifications" class="tab-content hidden">
-        <div class="p-4 border-b border-zinc-800"><h1 class="text-xl font-bold">Notifications</h1></div>
-        <div class="divide-y divide-zinc-800/60">
-          <div class="p-4 flex gap-3 hover:bg-zinc-900/10">
+        <div class="p-4 border-b border-white/10"><h1 class="text-xl font-bold">Notifications</h1></div>
+        <div class="divide-y divide-white/10">
+          <div class="p-4 flex gap-3 hover:bg-white/10">
             <i data-lucide="sparkles" class="text-yellow-500 w-6 h-6"></i>
             <div>
               <span class="font-bold text-sm">Horizon</span>
@@ -352,29 +463,29 @@
 
       <!-- TAB 4: DIRECT MESSAGES (real, private, between real signed-in users) -->
       <section id="tab-messages" class="tab-content hidden flex flex-col h-[calc(100vh-60px)] md:h-screen">
-        <div class="p-4 border-b border-zinc-800 flex items-center justify-between shrink-0">
+        <div class="p-4 border-b border-white/10 flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2">
             <i data-lucide="mail" class="text-sky-500 w-5 h-5" id="dm-header-icon"></i>
             <h1 class="text-lg font-bold">Messages</h1>
           </div>
         </div>
         <div class="flex flex-1 overflow-hidden">
-          <div class="w-full sm:w-1/3 border-r border-zinc-800 overflow-y-auto flex flex-col shrink-0" id="dm-list-panel">
-            <div class="p-3 border-b border-zinc-800 relative shrink-0">
+          <div class="w-full sm:w-1/3 border-r border-white/10 overflow-y-auto flex flex-col shrink-0" id="dm-list-panel">
+            <div class="p-3 border-b border-white/10 relative shrink-0">
               <i data-lucide="search" class="absolute left-6 top-6 text-zinc-500 w-4 h-4"></i>
-              <input type="text" id="dm-user-search-input" oninput="searchUsersForMessage()" placeholder="Search people by username..." class="w-full py-2 pl-9 pr-3 rounded-full text-xs bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-white" />
+              <input type="text" id="dm-user-search-input" oninput="searchUsersForMessage()" placeholder="Search people by username..." class="w-full py-2 pl-9 pr-3 rounded-full text-xs glass-input outline-none text-white" />
             </div>
-            <div id="dm-search-results" class="hidden flex-col divide-y divide-zinc-800/60 border-b border-zinc-800"></div>
-            <div class="p-2 border-b border-zinc-800 text-[10px] font-black tracking-wider text-zinc-500" id="dm-list-heading">CHATS</div>
+            <div id="dm-search-results" class="hidden flex-col divide-y divide-white/10 border-b border-white/10"></div>
+            <div class="p-2 border-b border-white/10 text-[10px] font-black tracking-wider text-zinc-500" id="dm-list-heading">CHATS</div>
             <div id="dm-conversation-list" class="flex flex-col flex-1"></div>
           </div>
           <div class="hidden sm:flex w-full sm:w-2/3 flex-col justify-between h-full relative" id="dm-chat-panel">
-            <div class="p-3 border-b border-zinc-800 flex items-center gap-2.5 shrink-0" id="active-chat-header-area">
+            <div class="p-3 border-b border-white/10 flex items-center gap-2.5 shrink-0" id="active-chat-header-area">
               <span class="text-xs text-zinc-500 p-2">Search a username or pick a chat to start messaging.</span>
             </div>
             <div class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col" id="chat-messages-log"></div>
-            <div class="p-3 border-t border-zinc-800 flex gap-2 items-center shrink-0 bg-black/50" id="chat-form-area">
-              <input type="text" id="dm-chat-input" placeholder="Start typing message..." onkeydown="if(event.key==='Enter'){sendDirectMessage();}" class="flex-1 p-2.5 rounded-full text-sm bg-zinc-900 border border-zinc-800 text-white outline-none focus:border-sky-500" />
+            <div class="p-3 border-t border-white/10 flex gap-2 items-center shrink-0 glass" id="chat-form-area">
+              <input type="text" id="dm-chat-input" placeholder="Start typing message..." onkeydown="if(event.key==='Enter'){sendDirectMessage();}" class="flex-1 p-2.5 rounded-full text-sm glass-input text-white outline-none" />
               <button onclick="sendDirectMessage()" class="p-2.5 rounded-full bg-sky-500 text-white hover:bg-sky-600 active:scale-95 transition-transform" id="btn-send-dm">
                 <i data-lucide="send" class="w-4 h-4"></i>
               </button>
@@ -401,14 +512,14 @@
           </div>
         </div>
 
-        <div class="h-32 bg-zinc-800 relative">
+        <div class="h-32 relative bg-gradient-to-br from-sky-600/40 via-purple-600/30 to-pink-500/30">
           <div class="absolute -bottom-10 left-4">
-            <img id="profile-avatar-img" src="" alt="Avatar" class="w-20 h-20 rounded-full border-4 border-black object-cover" />
+            <img id="profile-avatar-img" src="" alt="Avatar" class="w-20 h-20 rounded-full border-4 border-black object-cover avatar-ring" />
           </div>
         </div>
 
         <div class="flex justify-end p-4">
-          <button onclick="openEditProfile()" class="border border-zinc-700 hover:bg-zinc-900 px-4 py-1 rounded-full text-xs font-bold transition-colors">Edit profile</button>
+          <button onclick="openEditProfile()" class="glass-pill hover:bg-white/10 px-4 py-1 rounded-full text-xs font-bold transition-colors">Edit profile</button>
         </div>
 
         <div class="px-4">
@@ -425,21 +536,35 @@
           </div>
         </div>
 
-        <div id="profile-edit-panel" class="hidden px-4 mt-4 flex flex-col gap-2 bg-zinc-950/40 border border-zinc-800 rounded-2xl p-4 mx-4">
-          <input id="edit-profile-name" placeholder="Full name" class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <input id="edit-profile-avatar" placeholder="Avatar image URL" class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm" />
-          <textarea id="edit-profile-bio" placeholder="Bio" rows="2" class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-sm resize-none"></textarea>
+        <div id="profile-edit-panel" class="hidden px-4 mt-4 flex flex-col gap-2 glass-card p-4 mx-4">
+          <input id="edit-profile-name" placeholder="Full name" class="glass-input p-2.5 rounded-lg outline-none text-sm" />
+
+          <div class="flex items-center gap-3 py-1">
+            <div class="relative w-16 h-16 shrink-0">
+              <img id="edit-profile-avatar-preview" src="" alt="" class="hidden w-16 h-16 rounded-full object-cover avatar-ring" />
+              <div id="edit-profile-avatar-placeholder" class="w-16 h-16 rounded-full glass flex items-center justify-center text-zinc-400">
+                <i data-lucide="user" class="w-6 h-6"></i>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('edit-profile-avatar-file').click()" class="flex-1 photo-drop rounded-xl py-2.5 px-3 text-xs text-zinc-300 flex items-center justify-center gap-2">
+              <i data-lucide="image-plus" class="w-4 h-4"></i>
+              <span>Choose new photo from gallery (max 7MB)</span>
+            </button>
+            <input type="file" id="edit-profile-avatar-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'profile')" />
+          </div>
+
+          <textarea id="edit-profile-bio" placeholder="Bio" rows="2" class="glass-input p-2.5 rounded-lg outline-none text-sm resize-none"></textarea>
           <div class="flex gap-2 justify-end mt-1">
-            <button onclick="closeEditProfile()" class="px-4 py-1.5 rounded-full text-xs font-bold text-zinc-400 hover:bg-zinc-900">Cancel</button>
-            <button onclick="saveProfileEdits()" id="save-profile-btn" class="px-4 py-1.5 rounded-full text-xs font-bold text-white bg-sky-500 hover:bg-sky-600">Save</button>
+            <button onclick="closeEditProfile()" class="px-4 py-1.5 rounded-full text-xs font-bold text-zinc-400 hover:bg-white/5">Cancel</button>
+            <button onclick="saveProfileEdits()" id="save-profile-btn" class="px-4 py-1.5 rounded-full text-xs font-bold text-white neu-accent">Save</button>
           </div>
         </div>
 
-        <div class="mt-6 border-b border-zinc-800 flex text-center text-xs font-bold text-zinc-400">
+        <div class="mt-6 border-b border-white/10 flex text-center text-xs font-bold text-zinc-400">
           <button class="flex-1 py-3 text-white border-b-2 border-sky-500" id="profile-inner-tab">Posts</button>
         </div>
 
-        <div id="profile-timeline" class="divide-y divide-zinc-800/60"></div>
+        <div id="profile-timeline" class="divide-y divide-white/10"></div>
       </section>
 
       <!-- TAB 7: SETTINGS / THEME CUSTOMIZATION -->
@@ -447,7 +572,7 @@
         <h1 class="text-2xl font-bold mb-2">Customize your view</h1>
         <p class="text-zinc-400 text-sm mb-6">Manage your layout style, primary colors, and background theme profiles for customized viewing.</p>
 
-        <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-950/40 mb-6" id="settings-preview-card">
+        <div class="p-4 glass-card mb-6" id="settings-preview-card">
           <h3 class="font-bold text-xs text-zinc-500 uppercase tracking-wider mb-3">Live Preview</h3>
           <div class="flex gap-3 text-left">
             <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80" alt="avatar" class="w-10 h-10 rounded-full object-cover" />
@@ -461,34 +586,34 @@
         <div class="mb-6">
           <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">Primary Accent Color</span>
           <div class="flex gap-2.5 flex-wrap">
-            <button onclick="changeAccent('blue', '#1d9bf0')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-sky-500 hover:scale-105 transition-transform">Blue</button>
-            <button onclick="changeAccent('yellow', '#ffd400')" class="px-3 py-1.5 rounded-full text-xs font-black text-black bg-yellow-400 hover:scale-105 transition-transform">Yellow</button>
-            <button onclick="changeAccent('pink', '#f91880')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-pink-500 hover:scale-105 transition-transform">Pink</button>
-            <button onclick="changeAccent('purple', '#7856ff')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-purple-500 hover:scale-105 transition-transform">Purple</button>
-            <button onclick="changeAccent('orange', '#ff7a00')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-orange-500 hover:scale-105 transition-transform">Orange</button>
-            <button onclick="changeAccent('green', '#00ba7c')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-emerald-500 hover:scale-105 transition-transform">Green</button>
+            <button onclick="changeAccent('blue', '#1d9bf0')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-sky-500 hover:scale-105 transition-transform shadow-[0_4px_14px_rgba(29,155,240,0.5)]">Blue</button>
+            <button onclick="changeAccent('yellow', '#ffd400')" class="px-3 py-1.5 rounded-full text-xs font-black text-black bg-yellow-400 hover:scale-105 transition-transform shadow-[0_4px_14px_rgba(255,212,0,0.5)]">Yellow</button>
+            <button onclick="changeAccent('pink', '#f91880')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-pink-500 hover:scale-105 transition-transform shadow-[0_4px_14px_rgba(249,24,128,0.5)]">Pink</button>
+            <button onclick="changeAccent('purple', '#7856ff')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-purple-500 hover:scale-105 transition-transform shadow-[0_4px_14px_rgba(120,86,255,0.5)]">Purple</button>
+            <button onclick="changeAccent('orange', '#ff7a00')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-orange-500 hover:scale-105 transition-transform shadow-[0_4px_14px_rgba(255,122,0,0.5)]">Orange</button>
+            <button onclick="changeAccent('green', '#00ba7c')" class="px-3 py-1.5 rounded-full text-xs font-black text-white bg-emerald-500 hover:scale-105 transition-transform shadow-[0_4px_14px_rgba(0,186,124,0.5)]">Green</button>
           </div>
         </div>
 
         <div>
           <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">Background Profile</span>
           <div class="grid grid-cols-3 gap-3">
-            <button onclick="changeTheme('light')" class="p-3 rounded-xl border border-zinc-700 bg-white text-black hover:border-gray-400 flex flex-col items-center gap-2">
+            <button onclick="changeTheme('light')" class="p-3 rounded-xl glass-card bg-white text-black flex flex-col items-center gap-2">
               <i data-lucide="sun" class="w-5 h-5 text-yellow-500"></i>
               <span class="text-xs font-bold">Light</span>
             </button>
-            <button onclick="changeTheme('dim')" class="p-3 rounded-xl border border-slate-700 bg-slate-900 text-slate-100 hover:border-slate-500 flex flex-col items-center gap-2">
+            <button onclick="changeTheme('dim')" class="p-3 rounded-xl glass-card text-slate-100 flex flex-col items-center gap-2">
               <i data-lucide="moon" class="w-5 h-5 text-sky-400"></i>
               <span class="text-xs font-bold">Dim</span>
             </button>
-            <button onclick="changeTheme('dark')" class="p-3 rounded-xl border border-zinc-800 bg-black text-white hover:border-zinc-600 flex flex-col items-center gap-2">
+            <button onclick="changeTheme('dark')" class="p-3 rounded-xl glass-card text-white flex flex-col items-center gap-2">
               <i data-lucide="shield" class="w-5 h-5 text-gray-400"></i>
               <span class="text-xs font-bold">Lights Out</span>
             </button>
           </div>
         </div>
 
-        <div class="mt-8 pt-6 border-t border-zinc-800 flex flex-col gap-3 items-center">
+        <div class="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3 items-center">
           <button onclick="handleSignOutClick()" class="px-5 py-2 rounded-full font-bold text-sm text-red-400 border border-red-500/40 hover:bg-red-500/10 transition">Sign out</button>
           <p class="text-xs text-zinc-500 font-medium text-center">Live Firebase-backed multi-user edition</p>
         </div>
@@ -500,20 +625,20 @@
     <aside class="w-80 p-4 flex flex-col gap-4 hidden lg:flex shrink-0">
       <div class="relative">
         <i data-lucide="search" class="absolute left-4 top-3 text-zinc-500 w-4 h-4"></i>
-        <input type="text" id="right-search-input" onkeyup="globalSearchTweets()" placeholder="Search posts..." class="w-full py-2 pl-11 pr-4 rounded-full text-xs bg-zinc-900 border border-zinc-800 outline-none focus:border-sky-500 text-white" />
+        <input type="text" id="right-search-input" onkeyup="globalSearchTweets()" placeholder="Search posts..." class="w-full py-2 pl-11 pr-4 rounded-full text-xs glass-input outline-none text-white" />
       </div>
 
-      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-950/40" id="sidebar-promo-panel">
+      <div class="p-4 glass-card" id="sidebar-promo-panel">
         <h3 class="font-bold text-sm">Horizon is live</h3>
         <p class="text-[11px] text-zinc-400 mt-1">Every post, like, reply, and follow you make is synced instantly to everyone else signed in.</p>
       </div>
 
-      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-950/40" id="sidebar-trends-panel">
+      <div class="p-4 glass-card" id="sidebar-trends-panel">
         <h3 class="font-bold text-sm mb-3">What's happening</h3>
         <div id="right-trends-list" class="flex flex-col gap-3"></div>
       </div>
 
-      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-950/40" id="sidebar-follow-panel">
+      <div class="p-4 glass-card" id="sidebar-follow-panel">
         <h3 class="font-bold text-sm mb-3">People to message</h3>
         <div id="right-follow-list" class="flex flex-col gap-3"></div>
       </div>
@@ -528,7 +653,7 @@
   </div>
 
   <!-- MOBILE BOTTOM STICKY NAVIGATION BAR -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-800 bg-black flex justify-around py-2" id="mobile-nav-bar">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 glass border-x-0 border-b-0 flex justify-around py-2" id="mobile-nav-bar">
     <button onclick="switchTab('home')" class="mobile-nav-btn p-2 text-sky-500" data-tab="home">
       <i data-lucide="home" class="w-6 h-6"></i>
     </button>
@@ -569,8 +694,13 @@
     // ============================================================
     // GLOBAL STATE
     // ============================================================
-    let app, auth, db, fb; // fb = combined firebase auth+firestore function namespace
+    let app, auth, db, fb, storage, fbStorage; // fb = combined firebase auth+firestore function namespace; fbStorage = storage SDK namespace
     let firebaseReady = false;   // becomes true once bootFirebase() succeeds
+
+    // Photo-from-gallery upload state
+    const MAX_IMAGE_BYTES = 7 * 1024 * 1024; // 7MB hard limit for any user-uploaded photo
+    const selectedAvatarFiles = { signup: null, profile: null }; // holds File objects picked from device gallery, keyed by context
+    let selectedPostImageFile = null;   // File selected for the compose box
     let currentUser = null;      // { uid, username, displayName, avatar, bio, following:[], blocked:[], bookmarks:[] }
     let livePosts = null;        // null = still loading, array once first snapshot arrives
     let followersCount = 0;
@@ -624,6 +754,74 @@
     }
 
     // ============================================================
+    // PHOTO UPLOAD (from device gallery — no URL fields, 7MB max)
+    // ============================================================
+
+    // Validates a File picked from <input type="file">. Returns an error string, or null if OK.
+    function validateImageFile(file) {
+      if (!file) return 'No file selected.';
+      if (!file.type || !file.type.startsWith('image/')) return 'Please choose an image file.';
+      if (file.size > MAX_IMAGE_BYTES) {
+        const mb = (file.size / (1024 * 1024)).toFixed(1);
+        return `That photo is ${mb}MB — please choose one under 7MB.`;
+      }
+      return null;
+    }
+
+    // Shared handler wired to every "choose from gallery" <input type="file">.
+    // context is one of: 'signup', 'profile', 'post', 'story'
+    function handleAvatarFileSelect(evt, context) {
+      const input = evt.target;
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      const error = validateImageFile(file);
+      if (error) {
+        showToast(error);
+        input.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (context === 'signup') {
+          selectedAvatarFiles.signup = file;
+          const img = document.getElementById('signup-avatar-preview');
+          img.src = reader.result;
+          img.classList.remove('hidden');
+          document.getElementById('signup-avatar-placeholder').classList.add('hidden');
+          document.getElementById('signup-avatar-filename').textContent = file.name;
+        } else if (context === 'profile') {
+          selectedAvatarFiles.profile = file;
+          const img = document.getElementById('edit-profile-avatar-preview');
+          img.src = reader.result;
+          img.classList.remove('hidden');
+          document.getElementById('edit-profile-avatar-placeholder').classList.add('hidden');
+        } else if (context === 'post') {
+          selectedPostImageFile = file;
+          showPostImagePreview(reader.result);
+        } else if (context === 'story') {
+          uploadAndPostStory(file);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Uploads a File to Firebase Storage under pathPrefix and returns its public download URL.
+    // Throws if the file fails validation or Storage isn't ready — callers should catch this.
+    async function uploadImageFile(file, pathPrefix) {
+      const error = validateImageFile(file);
+      if (error) throw new Error(error);
+      if (!storage || !fbStorage) throw new Error('Storage is not ready yet.');
+
+      const safeName = (file.name || 'photo').replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `${pathPrefix}/${Date.now()}_${safeName}`;
+      const fileRef = fbStorage.ref(storage, path);
+      await fbStorage.uploadBytes(fileRef, file, { contentType: file.type });
+      return await fbStorage.getDownloadURL(fileRef);
+    }
+
+    // ============================================================
     // FIREBASE BOOTSTRAP
     // ============================================================
     async function bootFirebase() {
@@ -631,11 +829,14 @@
         const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js");
         const authMod = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js");
         const fsMod = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+        const storageMod = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js");
 
         app = initializeApp(firebaseConfig);
         auth = authMod.getAuth(app);
         db = fsMod.getFirestore(app);
+        storage = storageMod.getStorage(app);
         fb = Object.assign({}, authMod, fsMod);
+        fbStorage = storageMod;
 
         firebaseReady = true;
         setAuthConnecting(false);
@@ -805,15 +1006,13 @@
         });
     }
 
-    async function promptStoryUpload() {
+    async function uploadAndPostStory(file) {
       if (!currentUser) return;
-
-      // For simplicity, using a prompt for the photo URL.
-      // Swap this for a real file-upload flow (Firebase Storage) when ready.
-      const photoUrl = prompt('Enter your photo URL for the story:');
-      if (!photoUrl) return;
-
+      const fileInput = document.getElementById('story-image-file');
       try {
+        showToast('Uploading story...');
+        const imageUrl = await uploadImageFile(file, `stories/${currentUser.uid}`);
+
         const now = new Date();
         const expires = new Date(now.getTime() + (24 * 60 * 60 * 1000));
 
@@ -821,7 +1020,7 @@
           authorId: currentUser.uid,
           authorUsername: currentUser.username,
           authorAvatar: currentUser.avatar,
-          imageUrl: photoUrl,
+          imageUrl: imageUrl,
           createdAt: fb.serverTimestamp(),
           expiresAt: fb.Timestamp.fromDate(expires)
         });
@@ -830,6 +1029,8 @@
       } catch (err) {
         console.error(err);
         showToast('Could not post story: ' + err.message);
+      } finally {
+        if (fileInput) fileInput.value = '';
       }
     }
 
@@ -941,7 +1142,7 @@
         let username = document.getElementById('signup-username').value.trim().replace(/^@/, '').replace(/\s+/g, '_');
         const email = document.getElementById('signup-email').value.trim();
         const password = document.getElementById('signup-password').value;
-        const avatarUrl = document.getElementById('signup-avatar').value.trim();
+        const avatarFile = selectedAvatarFiles.signup || null;
 
         if (!name || !username || !email || password.length < 6) {
           setAuthError('Please fill all required fields (password needs 6+ characters).');
@@ -951,11 +1152,22 @@
         btn.disabled = true; btn.textContent = 'Creating account...';
         try {
           const cred = await fb.createUserWithEmailAndPassword(auth, email, password);
+          let avatarUrl = DEFAULT_AVATAR_BASE + encodeURIComponent(username);
+          if (avatarFile) {
+            btn.textContent = 'Uploading photo...';
+            try {
+              avatarUrl = await uploadImageFile(avatarFile, `avatars/${cred.user.uid}`);
+            } catch (upErr) {
+              console.error('Avatar upload failed', upErr);
+              showToast('Could not upload photo, using default avatar instead.');
+            }
+          }
           await fb.setDoc(fb.doc(db, 'users', cred.user.uid), {
             username, displayName: name, email,
-            bio: '', avatar: avatarUrl || (DEFAULT_AVATAR_BASE + encodeURIComponent(username)),
+            bio: '', avatar: avatarUrl,
             following: [], blocked: [], bookmarks: [], createdAt: fb.serverTimestamp()
           });
+          selectedAvatarFiles.signup = null;
         } catch (err) {
           console.error('Sign-up failed', err);
           setAuthError(friendlyAuthError(err));
@@ -1157,25 +1369,25 @@
 
       mapped.forEach(tweet => {
         const tweetCard = document.createElement('article');
-        tweetCard.className = 'p-4 hover:bg-zinc-500/5 transition duration-150';
+        tweetCard.className = 'p-4 hover:bg-white/[0.04] transition duration-150 border-b border-white/5';
 
         const verifiedBadge = tweet.user.verified
           ? `<span class="bg-sky-500 text-white rounded-full p-0.5 inline-flex items-center justify-center w-3.5 h-3.5"><i data-lucide="check" class="w-2 h-2" stroke-width="4"></i></span>`
           : '';
 
         const followBtn = !tweet.isMine
-          ? `<button onclick="toggleFollow('${tweet.user.uid}')" class="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${tweet.isFollowing ? 'border-zinc-700 text-zinc-400 hover:border-red-500 hover:text-red-400' : 'border-sky-500 text-sky-500 hover:bg-sky-500/10'}">${tweet.isFollowing ? 'Following' : 'Follow'}</button>`
+          ? `<button onclick="toggleFollow('${tweet.user.uid}')" class="ml-1 text-[10px] font-bold px-2 py-0.5 rounded-full glass-pill ${tweet.isFollowing ? 'text-zinc-400 hover:border-red-500 hover:text-red-400' : 'text-sky-400 hover:bg-sky-500/10'}">${tweet.isFollowing ? 'Following' : 'Follow'}</button>`
           : '';
 
         const imageElement = tweet.image
-          ? `<div class="mt-3 rounded-2xl overflow-hidden border border-zinc-800 max-h-96">
+          ? `<div class="mt-3 rounded-2xl overflow-hidden glass-card max-h-96">
                <img src="${tweet.image}" alt="post visual attachment" class="w-full h-full object-cover" onerror="this.style.display='none'" />
              </div>`
           : '';
 
         let commentsMarkup = '';
         if (tweet.comments && tweet.comments.length > 0) {
-          commentsMarkup = `<div class="mt-3 pl-3 border-l-2 border-zinc-800 flex flex-col gap-2">`;
+          commentsMarkup = `<div class="mt-3 pl-3 border-l-2 border-white/10 flex flex-col gap-2">`;
           tweet.comments.forEach(comment => {
             commentsMarkup += `
               <div class="text-xs">
@@ -1207,7 +1419,7 @@
 
         tweetCard.innerHTML = `
           <div class="flex gap-3">
-            <img src="${tweet.user.avatar}" alt="${tweet.user.name}" class="w-10 h-10 rounded-full object-cover" />
+            <img src="${tweet.user.avatar}" alt="${tweet.user.name}" class="w-10 h-10 rounded-full object-cover avatar-ring" />
             <div class="flex-1">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="font-bold hover:underline cursor-pointer text-sm">${tweet.user.name}</span>
@@ -1243,7 +1455,7 @@
               </div>
 
               <div id="reply-field-${tweet.id}" class="hidden mt-3 flex gap-2 items-center">
-                <input type="text" id="reply-text-${tweet.id}" placeholder="Post your reply..." class="flex-1 p-2 text-xs rounded-full bg-zinc-900 border border-zinc-800 text-white outline-none" />
+                <input type="text" id="reply-text-${tweet.id}" placeholder="Post your reply..." class="flex-1 p-2 text-xs rounded-full glass-input text-white outline-none" />
                 <button onclick="submitReply('${tweet.id}')" class="px-4 py-1.5 rounded-full text-xs font-bold text-white bg-sky-500 hover:bg-sky-600">Reply</button>
               </div>
 
@@ -1263,35 +1475,53 @@
     async function createNewTweet() {
       if (!currentUser) return;
       const textInput = document.getElementById('composer-text');
-      const imageInput = document.getElementById('composer-image-url');
       const textVal = textInput.value.trim();
-      const imageVal = imageInput.value.trim();
-      if (!textVal && !imageVal) return;
+      if (!textVal && !selectedPostImageFile) return;
 
       const btn = document.getElementById('btn-post-submit');
       btn.disabled = true; btn.textContent = 'Posting...';
       try {
+        let mediaUrl = null;
+        if (selectedPostImageFile) {
+          btn.textContent = 'Uploading photo...';
+          mediaUrl = await uploadImageFile(selectedPostImageFile, `posts/${currentUser.uid}`);
+          btn.textContent = 'Posting...';
+        }
         await fb.addDoc(fb.collection(db, 'posts'), {
           authorId: currentUser.uid,
           authorUsername: currentUser.username,
           authorName: currentUser.displayName,
           authorAvatar: currentUser.avatar,
           contentBody: textVal,
-          mediaUrl: imageVal || null,
+          mediaUrl: mediaUrl,
           createdAt: fb.serverTimestamp(),
           likedBy: [],
           retweetedBy: [],
           comments: []
         });
         textInput.value = '';
-        imageInput.value = '';
-        toggleImageUrlField(false);
+        cancelPostImage();
       } catch (err) {
         console.error(err);
         showToast('Could not publish post: ' + err.message);
       } finally {
         btn.disabled = false; btn.textContent = 'Post';
       }
+    }
+
+    function showPostImagePreview(dataUrl) {
+      document.getElementById('composer-image-preview').src = dataUrl;
+      document.getElementById('image-composer-input-container').classList.remove('hidden');
+      document.getElementById('image-composer-input-container').classList.add('flex');
+    }
+
+    function cancelPostImage() {
+      selectedPostImageFile = null;
+      const fileInput = document.getElementById('composer-image-file');
+      if (fileInput) fileInput.value = '';
+      const container = document.getElementById('image-composer-input-container');
+      container.classList.add('hidden');
+      container.classList.remove('flex');
     }
 
     async function deleteTweet(postId) {
@@ -1305,11 +1535,6 @@
           showToast('Could not delete post: ' + err.message);
         }
       }
-    }
-
-    function toggleImageUrlField(show) {
-      const container = document.getElementById('image-composer-input-container');
-      if (show) container.classList.remove('hidden'); else container.classList.add('hidden');
     }
 
     async function toggleLike(postId) {
@@ -1444,7 +1669,7 @@
         const isFollowing = (currentUser.following || []).includes(u.uid);
         const avatar = u.avatar || (DEFAULT_AVATAR_BASE + encodeURIComponent(u.username || u.uid));
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between gap-2 p-2 rounded-lg hover:bg-zinc-900/60';
+        row.className = 'flex items-center justify-between gap-2 p-2 rounded-lg hover:bg-white/10';
         row.innerHTML = `
           <div class="flex items-center gap-2 min-w-0">
             <img src="${avatar}" alt="${u.username || ''}" class="w-10 h-10 rounded-full object-cover shrink-0" />
@@ -1492,7 +1717,7 @@
       container.innerHTML = '';
       trends.forEach(trend => {
         const trendItem = document.createElement('div');
-        trendItem.className = 'p-4 hover:bg-zinc-900 cursor-pointer transition';
+        trendItem.className = 'p-4 hover:bg-white/10 cursor-pointer transition';
         trendItem.onclick = function () {
           const exploreInput = document.getElementById('explore-search-input');
           exploreInput.value = trend.topic;
@@ -1547,9 +1772,9 @@
         const isActive = activeConversationId === convo.id;
         const button = document.createElement('button');
         button.onclick = function () { openConversation(convo.id, convo.otherUser); };
-        button.className = `w-full p-3 flex items-center gap-2.5 transition text-left border-b border-zinc-800 ${isActive ? 'bg-zinc-900' : 'hover:bg-zinc-900/60'}`;
+        button.className = `w-full p-3 flex items-center gap-2.5 transition text-left border-b border-white/10 ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`;
         button.innerHTML = `
-          <img src="${convo.otherUser.avatar}" alt="${convo.otherUser.displayName}" class="w-10 h-10 rounded-full object-cover border border-zinc-800 flex-shrink-0" />
+          <img src="${convo.otherUser.avatar}" alt="${convo.otherUser.displayName}" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
           <div class="hidden sm:flex flex-col min-w-0 flex-1">
             <div class="flex items-center gap-1 justify-between">
               <span class="font-bold text-xs truncate text-zinc-100">${convo.otherUser.displayName}</span>
@@ -1607,9 +1832,9 @@
           resultsContainer.innerHTML = '';
           openConversationWithUser(u.uid, u.username, u.displayName, u.avatar || (DEFAULT_AVATAR_BASE + encodeURIComponent(u.username || u.uid)));
         };
-        row.className = 'w-full p-3 flex items-center gap-2.5 hover:bg-zinc-900/60 transition text-left';
+        row.className = 'w-full p-3 flex items-center gap-2.5 hover:bg-white/10 transition text-left';
         row.innerHTML = `
-          <img src="${u.avatar || (DEFAULT_AVATAR_BASE + encodeURIComponent(u.username || u.uid))}" alt="${u.displayName}" class="w-9 h-9 rounded-full object-cover border border-zinc-800 flex-shrink-0" />
+          <img src="${u.avatar || (DEFAULT_AVATAR_BASE + encodeURIComponent(u.username || u.uid))}" alt="${u.displayName}" class="w-9 h-9 rounded-full object-cover border border-white/10 flex-shrink-0" />
           <div class="flex flex-col min-w-0">
             <span class="font-bold text-xs truncate text-zinc-100">${u.displayName}</span>
             <span class="text-[10px] text-zinc-500 truncate">@${u.username}</span>
@@ -1700,7 +1925,7 @@
             <p class="whitespace-pre-wrap"></p><span class="text-[8px] block text-right opacity-50 mt-1">${timestamp}</span>
           `;
         } else {
-          msgBubble.className = "max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed self-start text-zinc-200 bg-zinc-900 rounded-bl-none shadow-sm";
+          msgBubble.className = "max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed self-start text-zinc-200 glass-card rounded-bl-none shadow-sm";
           msgBubble.innerHTML = `<p class="whitespace-pre-wrap"></p><span class="text-[8px] block text-right opacity-50 mt-1">${timestamp}</span>`;
         }
         
@@ -1781,11 +2006,11 @@
         return;
       }
 
-      container.innerHTML = `<div class="divide-y divide-zinc-800 rounded-xl border border-zinc-800 bg-zinc-950/20 overflow-hidden"></div>`;
+      container.innerHTML = `<div class="divide-y divide-white/10 glass-card overflow-hidden"></div>`;
       const listWrapper = container.firstChild;
       bookmarkedList.forEach(tweet => {
         const item = document.createElement('article');
-        item.className = 'p-4 hover:bg-zinc-900/40 transition flex gap-3';
+        item.className = 'p-4 hover:bg-white/10 transition flex gap-3';
         item.innerHTML = `
           <img src="${tweet.user.avatar}" alt="user" class="w-8 h-8 rounded-full" />
           <div>
@@ -1816,7 +2041,7 @@
       container.innerHTML = '';
       myTweets.forEach(tweet => {
         const item = document.createElement('div');
-        item.className = 'p-4 hover:bg-zinc-900/10 transition flex gap-3 group';
+        item.className = 'p-4 hover:bg-white/10 transition flex gap-3 group';
         item.innerHTML = `
           <img src="${tweet.user.avatar}" alt="me" class="w-10 h-10 rounded-full" />
           <div class="flex-1">
@@ -1841,8 +2066,20 @@
     function openEditProfile() {
       if (!currentUser) return;
       document.getElementById('edit-profile-name').value = currentUser.displayName || '';
-      document.getElementById('edit-profile-avatar').value = currentUser.avatar || '';
       document.getElementById('edit-profile-bio').value = currentUser.bio || '';
+      selectedAvatarFiles.profile = null;
+      const previewImg = document.getElementById('edit-profile-avatar-preview');
+      const placeholder = document.getElementById('edit-profile-avatar-placeholder');
+      const fileInput = document.getElementById('edit-profile-avatar-file');
+      if (fileInput) fileInput.value = '';
+      if (currentUser.avatar) {
+        previewImg.src = currentUser.avatar;
+        previewImg.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        previewImg.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
       document.getElementById('profile-edit-panel').classList.remove('hidden');
     }
     function closeEditProfile() {
@@ -1851,16 +2088,22 @@
     async function saveProfileEdits() {
       if (!currentUser) return;
       const name = document.getElementById('edit-profile-name').value.trim();
-      const avatar = document.getElementById('edit-profile-avatar').value.trim();
       const bio = document.getElementById('edit-profile-bio').value.trim();
       const btn = document.getElementById('save-profile-btn');
       btn.disabled = true; btn.textContent = 'Saving...';
       try {
+        let avatar = currentUser.avatar;
+        if (selectedAvatarFiles.profile) {
+          btn.textContent = 'Uploading photo...';
+          avatar = await uploadImageFile(selectedAvatarFiles.profile, `avatars/${currentUser.uid}`);
+          btn.textContent = 'Saving...';
+        }
         await fb.updateDoc(fb.doc(db, 'users', currentUser.uid), {
           displayName: name || currentUser.displayName,
-          avatar: avatar || currentUser.avatar,
+          avatar: avatar,
           bio
         });
+        selectedAvatarFiles.profile = null;
         closeEditProfile();
         showToast('Profile updated');
       } catch (err) {
