@@ -125,6 +125,63 @@
     .avatar-ring { box-shadow: 0 0 0 3px rgba(255,255,255,0.08), 0 8px 20px rgba(0,0,0,0.4); }
     .upload-progress-track { background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; height: 4px; }
     .upload-progress-bar { height: 100%; background: var(--accent-color); border-radius: 999px; transition: width .2s ease; }
+
+    /* ===================== SIGN-IN — scoped to #auth-overlay only ==========
+       A minimal, Apple ID–style credential flow: one field at a time, system
+       font stack, monochrome surface with a single blue accent. Everything
+       here is scoped under #auth-overlay so the rest of the app's existing
+       glass/neu theme is completely untouched. */
+    #auth-overlay {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    #auth-overlay .aid-mark {
+      width: 54px; height: 54px; border-radius: 15px; margin: 0 auto 18px;
+      background: linear-gradient(155deg, #2c2c2e, #1c1c1e);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 30px rgba(0,0,0,0.5);
+    }
+    #auth-overlay .aid-title { letter-spacing: -0.03em; }
+    #auth-overlay .aid-sub { color: #86868b; }
+    #auth-overlay .aid-card {
+      background: rgba(28,28,30,0.6);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+      animation: aidCardIn .5s cubic-bezier(.2,.9,.25,1);
+    }
+    @keyframes aidCardIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    #auth-overlay .aid-step-anim { animation: aidStepIn .32s cubic-bezier(.2,.9,.25,1); }
+    @keyframes aidStepIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+    #auth-overlay .aid-input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #f5f5f7;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    #auth-overlay .aid-input::placeholder { color: #6e6e73; }
+    #auth-overlay .aid-input:focus { outline: none; border-color: #0a84ff; background: rgba(255,255,255,0.08); box-shadow: 0 0 0 4px rgba(10,132,255,0.25); }
+    #auth-overlay .aid-btn-primary { background: #0a84ff; color: #fff; transition: filter .15s ease, transform .12s ease; }
+    #auth-overlay .aid-btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+    #auth-overlay .aid-btn-primary:active:not(:disabled) { transform: scale(.97); }
+    #auth-overlay .aid-btn-primary:disabled { opacity: .45; cursor: default; }
+    #auth-overlay .aid-btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #f5f5f7; transition: background .15s ease, transform .12s ease; }
+    #auth-overlay .aid-btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.13); }
+    #auth-overlay .aid-btn-secondary:active:not(:disabled) { transform: scale(.97); }
+    #auth-overlay .aid-link { color: #0a84ff; }
+    #auth-overlay .aid-link:hover { text-decoration: underline; }
+    #auth-overlay .aid-divider { border-color: rgba(255,255,255,0.10); }
+    #auth-overlay .aid-photo-drop { background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(255,255,255,0.16); transition: border-color .2s ease, background .2s ease; cursor: pointer; }
+    #auth-overlay .aid-photo-drop:hover { border-color: #0a84ff; background: rgba(10,132,255,0.08); }
+    #auth-overlay .aid-avatar-ring { box-shadow: 0 0 0 2px rgba(255,255,255,0.08); }
+    #auth-overlay .aid-avatar-placeholder { background: rgba(255,255,255,0.06); }
+    #auth-overlay .aid-back-chip { color: #86868b; transition: color .15s ease; }
+    #auth-overlay .aid-back-chip:hover { color: #f5f5f7; }
+    @media (prefers-reduced-motion: reduce) {
+      #auth-overlay .aid-card, #auth-overlay .aid-step-anim { animation: none !important; }
+    }
   </style>
 </head>
 <body class="bg-black text-gray-100 transition-colors duration-200 overflow-x-hidden font-sans">
@@ -164,53 +221,87 @@
 
   <!-- ============ AUTH OVERLAY (shown until signed in) ============ -->
   <div id="auth-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-    <div class="w-full max-w-sm">
-      <div class="text-center mb-6">
-        <span class="text-4xl text-sky-500 font-bold drop-shadow-[0_0_18px_rgba(29,155,240,0.6)]">𝕏</span>
-        <h1 class="text-2xl font-black mt-2 tracking-tight">Horizon</h1>
-        <p class="text-zinc-400 text-sm mt-1">Sign in to post, like, and chat live with everyone else here.</p>
+    <div class="w-full max-w-[380px]">
+
+      <div class="aid-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 4.5L12 19.5L20 4.5" stroke="#f5f5f7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7.6 12H16.4" stroke="#f5f5f7" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
       </div>
 
-      <div class="glass-strong rounded-3xl p-5">
-        <div id="auth-error" class="hidden mb-3 text-xs text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-2"></div>
+      <div class="text-center mb-7">
+        <h1 class="aid-title text-[26px] font-semibold text-white">Horizon</h1>
+        <p class="aid-sub text-[15px] mt-1.5">Sign in to keep up, in real time.</p>
+      </div>
 
+      <div class="aid-card rounded-[20px] p-6">
+        <div id="auth-error" class="hidden mb-4 text-[13px] text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-2.5"></div>
+
+        <!-- SIGN IN -->
         <form id="signin-form" class="flex flex-col gap-3">
-          <input id="signin-email" type="email" autocomplete="email" required placeholder="Email" class="glass-input p-3 rounded-xl outline-none text-sm" />
-          <input id="signin-password" type="password" autocomplete="current-password" required placeholder="Password" class="glass-input p-3 rounded-xl outline-none text-sm" />
-          <button type="submit" id="signin-submit-btn" class="neu-accent py-3 rounded-full font-bold text-white transition text-sm">Sign in</button>
-        </form>
-
-        <form id="signup-form" class="hidden flex-col gap-3">
-          <input id="signup-name" required placeholder="Full name" class="glass-input p-3 rounded-xl outline-none text-sm" />
-          <input id="signup-username" required placeholder="Username (no spaces or @)" class="glass-input p-3 rounded-xl outline-none text-sm" />
-          <input id="signup-email" type="email" autocomplete="email" required placeholder="Email" class="glass-input p-3 rounded-xl outline-none text-sm" />
-          <input id="signup-password" type="password" autocomplete="new-password" required placeholder="Password (6+ characters)" class="glass-input p-3 rounded-xl outline-none text-sm" />
-
-          <div class="flex items-center gap-3">
-            <div class="relative w-14 h-14 shrink-0">
-              <img id="signup-avatar-preview" src="" alt="" class="hidden w-14 h-14 rounded-full object-cover avatar-ring" />
-              <div id="signup-avatar-placeholder" class="w-14 h-14 rounded-full glass flex items-center justify-center text-zinc-400">
-                <i data-lucide="user" class="w-6 h-6"></i>
-              </div>
-            </div>
-            <button type="button" onclick="document.getElementById('signup-avatar-file').click()" class="flex-1 photo-drop rounded-xl py-2.5 px-3 text-xs text-zinc-300 flex items-center justify-center gap-2">
-              <i data-lucide="image-plus" class="w-4 h-4"></i>
-              <span id="signup-avatar-filename">Choose profile photo (optional, max 7MB)</span>
-            </button>
-            <input type="file" id="signup-avatar-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'signup')" />
+          <div id="signin-step-1" class="flex flex-col gap-3">
+            <input id="signin-email" type="email" autocomplete="email" required placeholder="Email"
+                   class="aid-input p-3.5 rounded-xl text-[15px]" />
+            <button type="button" onclick="aidNextStep('signin')"
+                    class="aid-btn-primary py-3.5 rounded-xl font-medium text-[15px]">Continue</button>
           </div>
 
-          <button type="submit" id="signup-submit-btn" class="neu-accent py-3 rounded-full font-bold text-white transition text-sm">Create account</button>
+          <div id="signin-step-2" class="hidden flex-col gap-3">
+            <button type="button" onclick="aidPrevStep('signin')" class="aid-back-chip flex items-center gap-1 text-[13px] self-start -mb-1">
+              <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+              <span id="signin-email-display" class="truncate max-w-[240px]"></span>
+            </button>
+            <input id="signin-password" type="password" autocomplete="current-password" required placeholder="Password"
+                   class="aid-input p-3.5 rounded-xl text-[15px]" />
+            <button type="submit" id="signin-submit-btn"
+                    class="aid-btn-primary py-3.5 rounded-xl font-medium text-[15px]">Sign In</button>
+          </div>
         </form>
 
-        <div class="relative flex py-4 items-center">
-          <div class="flex-grow border-t border-white/10"></div>
-          <span class="flex-shrink-0 mx-4 text-zinc-500 text-xs">or</span>
-          <div class="flex-grow border-t border-white/10"></div>
+        <!-- SIGN UP -->
+        <form id="signup-form" class="hidden flex-col gap-3">
+          <div id="signup-step-1" class="flex flex-col gap-3">
+            <input id="signup-name" required placeholder="Full name" class="aid-input p-3.5 rounded-xl text-[15px]" />
+            <input id="signup-username" required placeholder="Username" class="aid-input p-3.5 rounded-xl text-[15px]" />
+            <input id="signup-email" type="email" autocomplete="email" required placeholder="Email" class="aid-input p-3.5 rounded-xl text-[15px]" />
+            <button type="button" onclick="aidNextStep('signup')"
+                    class="aid-btn-primary py-3.5 rounded-xl font-medium text-[15px]">Continue</button>
+          </div>
+
+          <div id="signup-step-2" class="hidden flex-col gap-3">
+            <button type="button" onclick="aidPrevStep('signup')" class="aid-back-chip flex items-center gap-1 text-[13px] self-start -mb-1">
+              <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+              <span id="signup-email-display" class="truncate max-w-[240px]"></span>
+            </button>
+            <input id="signup-password" type="password" autocomplete="new-password" required placeholder="Password (6+ characters)" class="aid-input p-3.5 rounded-xl text-[15px]" />
+
+            <div class="flex items-center gap-3">
+              <div class="relative w-12 h-12 shrink-0">
+                <img id="signup-avatar-preview" src="" alt="" class="hidden w-12 h-12 rounded-full object-cover aid-avatar-ring" />
+                <div id="signup-avatar-placeholder" class="w-12 h-12 rounded-full aid-avatar-placeholder flex items-center justify-center text-zinc-400">
+                  <i data-lucide="user" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <button type="button" onclick="document.getElementById('signup-avatar-file').click()" class="flex-1 aid-photo-drop rounded-xl py-2.5 px-3 text-[13px] text-zinc-300 flex items-center justify-center gap-2">
+                <i data-lucide="image-plus" class="w-4 h-4"></i>
+                <span id="signup-avatar-filename">Add a photo (optional)</span>
+              </button>
+              <input type="file" id="signup-avatar-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'signup')" />
+            </div>
+
+            <button type="submit" id="signup-submit-btn" class="aid-btn-primary py-3.5 rounded-xl font-medium text-[15px]">Create Account</button>
+          </div>
+        </form>
+
+        <div class="relative flex py-5 items-center">
+          <div class="flex-grow border-t aid-divider"></div>
+          <span class="flex-shrink-0 mx-4 aid-sub text-[12px]">or</span>
+          <div class="flex-grow border-t aid-divider"></div>
         </div>
 
-        <button type="button" onclick="handleGoogleSignIn()" id="google-signin-btn" class="w-full py-3 rounded-full font-bold glass-card text-white hover:brightness-110 transition text-sm flex items-center justify-center gap-2">
-          <svg class="w-5 h-5" viewBox="0 0 24 24">
+        <button type="button" onclick="handleGoogleSignIn()" id="google-signin-btn" class="aid-btn-secondary w-full py-3.5 rounded-xl font-medium text-[15px] flex items-center justify-center gap-2.5">
+          <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -219,12 +310,12 @@
           Continue with Google
         </button>
 
-        <p class="text-center text-xs text-zinc-500 mt-4">
-          <span id="auth-toggle-signup">New here? <button type="button" onclick="showAuthForm('signup')" class="text-sky-500 font-bold hover:underline">Create an account</button></span>
-          <span id="auth-toggle-signin" class="hidden">Already have an account? <button type="button" onclick="showAuthForm('signin')" class="text-sky-500 font-bold hover:underline">Sign in</button></span>
+        <p class="text-center text-[13px] aid-sub mt-5">
+          <span id="auth-toggle-signup">New here? <button type="button" onclick="showAuthForm('signup')" class="aid-link font-medium">Create an account</button></span>
+          <span id="auth-toggle-signin" class="hidden">Already have an account? <button type="button" onclick="showAuthForm('signin')" class="aid-link font-medium">Sign in</button></span>
         </p>
       </div>
-      <p class="text-center text-[10px] text-zinc-600 mt-4">Everything you post here is visible in real time to everyone else signed in to this app.</p>
+      <p class="text-center text-[11px] text-zinc-600 mt-5">Everything you post here is visible in real time to everyone else signed in to this app.</p>
     </div>
   </div>
 
@@ -390,11 +481,12 @@
         </div>
 
         <div id="stories-tray" class="flex gap-4 overflow-x-auto px-4 py-3 border-b border-white/10 scrollbar-hide">
-          <button onclick="document.getElementById('story-image-file').click()" class="flex flex-col items-center gap-1 shrink-0">
-            <div class="w-16 h-16 rounded-full photo-drop flex items-center justify-center">
-              <i data-lucide="plus" class="w-6 h-6 text-zinc-400"></i>
+          <button id="add-story-btn" onclick="document.getElementById('story-image-file').click()" class="flex flex-col items-center gap-1 shrink-0">
+            <div id="add-story-icon-wrap" class="w-16 h-16 rounded-full photo-drop flex items-center justify-center">
+              <i id="add-story-icon" data-lucide="plus" class="w-6 h-6 text-zinc-400"></i>
+              <i id="add-story-spinner" data-lucide="loader-2" class="w-6 h-6 text-zinc-400 hidden animate-spin"></i>
             </div>
-            <span class="text-[10px] text-zinc-400">Add Story</span>
+            <span id="add-story-label" class="text-[10px] text-zinc-400">Add Story</span>
           </button>
           <input type="file" id="story-image-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'story')" />
           <div id="active-stories" class="flex gap-4"></div>
@@ -782,6 +874,13 @@
         return;
       }
 
+      // Stories never need a data-URL preview — start the upload right away
+      // instead of waiting on a FileReader pass that nobody reads.
+      if (context === 'story') {
+        uploadAndPostStory(file);
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
         if (context === 'signup') {
@@ -800,11 +899,21 @@
         } else if (context === 'post') {
           selectedPostImageFile = file;
           showPostImagePreview(reader.result);
-        } else if (context === 'story') {
-          uploadAndPostStory(file);
         }
       };
       reader.readAsDataURL(file);
+    }
+
+    // Wraps a promise with a hard timeout. If the underlying network/SDK call
+    // never settles (hung Storage upload, blocked Firestore write, etc.) this
+    // forces a rejection after `ms` instead of letting the caller's UI spin
+    // forever. Always clears its own timer so it never leaks or fires late.
+    function withTimeout(promise, ms, timeoutMessage) {
+      let timer;
+      const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(timeoutMessage)), ms);
+      });
+      return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
     }
 
     // Uploads a File to Firebase Storage under pathPrefix and returns its public download URL.
@@ -898,6 +1007,7 @@
         if (unsubscribeStories) unsubscribeStories();
         document.getElementById('app-root').classList.add('hidden');
         document.getElementById('auth-overlay').classList.remove('hidden');
+        resetAuthSteps();
       }
     }
 
@@ -1009,28 +1119,47 @@
     async function uploadAndPostStory(file) {
       if (!currentUser) return;
       const fileInput = document.getElementById('story-image-file');
+      const btn = document.getElementById('add-story-btn');
+      const icon = document.getElementById('add-story-icon');
+      const spinner = document.getElementById('add-story-spinner');
+
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add('hidden');
+      if (spinner) spinner.classList.remove('hidden');
+
       try {
         showToast('Uploading story...');
-        const imageUrl = await uploadImageFile(file, `stories/${currentUser.uid}`);
+        const imageUrl = await withTimeout(
+          uploadImageFile(file, `stories/${currentUser.uid}`),
+          20000,
+          'Story upload timed out. This usually means Firebase Storage rules or CORS are blocking the request — check the console and Storage rules for the stories/ path.'
+        );
 
         const now = new Date();
         const expires = new Date(now.getTime() + (24 * 60 * 60 * 1000));
 
-        await fb.addDoc(fb.collection(db, 'stories'), {
-          authorId: currentUser.uid,
-          authorUsername: currentUser.username,
-          authorAvatar: currentUser.avatar,
-          imageUrl: imageUrl,
-          createdAt: fb.serverTimestamp(),
-          expiresAt: fb.Timestamp.fromDate(expires)
-        });
+        await withTimeout(
+          fb.addDoc(fb.collection(db, 'stories'), {
+            authorId: currentUser.uid,
+            authorUsername: currentUser.username,
+            authorAvatar: currentUser.avatar,
+            imageUrl: imageUrl,
+            createdAt: fb.serverTimestamp(),
+            expiresAt: fb.Timestamp.fromDate(expires)
+          }),
+          15000,
+          'Saving the story timed out. Check your Firestore security rules for the stories collection.'
+        );
 
         showToast('Story posted!');
       } catch (err) {
-        console.error(err);
+        console.error('Story upload failed:', err);
         showToast('Could not post story: ' + err.message);
       } finally {
         if (fileInput) fileInput.value = '';
+        if (btn) btn.disabled = false;
+        if (icon) icon.classList.remove('hidden');
+        if (spinner) spinner.classList.add('hidden');
       }
     }
 
@@ -1059,6 +1188,56 @@
       document.getElementById('auth-toggle-signup').classList.toggle('hidden', which === 'signup');
       document.getElementById('auth-toggle-signin').classList.toggle('hidden', which === 'signin');
       setAuthError('');
+      resetAuthSteps();
+    }
+
+    // Advances a credential form (signin/signup) from its first step (email,
+    // plus name/username for signup) to its second step (password, etc).
+    // Uses native reportValidity() so required/type=email checks still apply
+    // even though these are plain buttons, not submit buttons.
+    function aidNextStep(prefix) {
+      const emailInput = document.getElementById(prefix + '-email');
+      if (prefix === 'signup') {
+        const nameInput = document.getElementById('signup-name');
+        const usernameInput = document.getElementById('signup-username');
+        if (nameInput && !nameInput.reportValidity()) return;
+        if (usernameInput && !usernameInput.reportValidity()) return;
+      }
+      if (emailInput && !emailInput.reportValidity()) return;
+
+      const step1 = document.getElementById(prefix + '-step-1');
+      const step2 = document.getElementById(prefix + '-step-2');
+      const display = document.getElementById(prefix + '-email-display');
+      if (display && emailInput) display.textContent = emailInput.value.trim();
+
+      step1.classList.add('hidden'); step1.classList.remove('flex');
+      step2.classList.remove('hidden'); step2.classList.add('flex');
+
+      // Restart the slide-in animation each time this step is (re)entered.
+      step2.classList.remove('aid-step-anim');
+      void step2.offsetWidth;
+      step2.classList.add('aid-step-anim');
+
+      const passwordInput = document.getElementById(prefix + '-password');
+      setTimeout(() => { if (passwordInput) passwordInput.focus(); }, 260);
+    }
+
+    function aidPrevStep(prefix) {
+      const step1 = document.getElementById(prefix + '-step-1');
+      const step2 = document.getElementById(prefix + '-step-2');
+      step2.classList.add('hidden'); step2.classList.remove('flex');
+      step1.classList.remove('hidden'); step1.classList.add('flex');
+    }
+
+    // Returns both the sign-in and create-account forms to their first step —
+    // called whenever the auth screen switches forms or is shown again after sign-out.
+    function resetAuthSteps() {
+      ['signin', 'signup'].forEach(prefix => {
+        const step1 = document.getElementById(prefix + '-step-1');
+        const step2 = document.getElementById(prefix + '-step-2');
+        if (step1) { step1.classList.remove('hidden'); step1.classList.add('flex'); }
+        if (step2) { step2.classList.add('hidden'); step2.classList.remove('flex'); }
+      });
     }
 
     function setAuthError(msg) {
@@ -1156,7 +1335,11 @@
           if (avatarFile) {
             btn.textContent = 'Uploading photo...';
             try {
-              avatarUrl = await uploadImageFile(avatarFile, `avatars/${cred.user.uid}`);
+              avatarUrl = await withTimeout(
+                uploadImageFile(avatarFile, `avatars/${cred.user.uid}`),
+                20000,
+                'Avatar upload timed out.'
+              );
             } catch (upErr) {
               console.error('Avatar upload failed', upErr);
               showToast('Could not upload photo, using default avatar instead.');
@@ -1484,25 +1667,33 @@
         let mediaUrl = null;
         if (selectedPostImageFile) {
           btn.textContent = 'Uploading photo...';
-          mediaUrl = await uploadImageFile(selectedPostImageFile, `posts/${currentUser.uid}`);
+          mediaUrl = await withTimeout(
+            uploadImageFile(selectedPostImageFile, `posts/${currentUser.uid}`),
+            20000,
+            'Photo upload timed out. Check Firebase Storage rules/CORS for the posts/ path and try again.'
+          );
           btn.textContent = 'Posting...';
         }
-        await fb.addDoc(fb.collection(db, 'posts'), {
-          authorId: currentUser.uid,
-          authorUsername: currentUser.username,
-          authorName: currentUser.displayName,
-          authorAvatar: currentUser.avatar,
-          contentBody: textVal,
-          mediaUrl: mediaUrl,
-          createdAt: fb.serverTimestamp(),
-          likedBy: [],
-          retweetedBy: [],
-          comments: []
-        });
+        await withTimeout(
+          fb.addDoc(fb.collection(db, 'posts'), {
+            authorId: currentUser.uid,
+            authorUsername: currentUser.username,
+            authorName: currentUser.displayName,
+            authorAvatar: currentUser.avatar,
+            contentBody: textVal,
+            mediaUrl: mediaUrl,
+            createdAt: fb.serverTimestamp(),
+            likedBy: [],
+            retweetedBy: [],
+            comments: []
+          }),
+          15000,
+          'Publishing the post timed out. Check your Firestore security rules for the posts collection.'
+        );
         textInput.value = '';
         cancelPostImage();
       } catch (err) {
-        console.error(err);
+        console.error('Post creation failed:', err);
         showToast('Could not publish post: ' + err.message);
       } finally {
         btn.disabled = false; btn.textContent = 'Post';
@@ -2011,14 +2202,20 @@
       bookmarkedList.forEach(tweet => {
         const item = document.createElement('article');
         item.className = 'p-4 hover:bg-white/10 transition flex gap-3';
+        const imageElement = tweet.image
+          ? `<div class="mt-2 rounded-2xl overflow-hidden glass-card max-h-72">
+               <img src="${tweet.image}" alt="post visual attachment" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+             </div>`
+          : '';
         item.innerHTML = `
           <img src="${tweet.user.avatar}" alt="user" class="w-8 h-8 rounded-full" />
-          <div>
+          <div class="flex-1">
             <div class="flex gap-1.5 items-center">
               <span class="font-bold text-sm text-zinc-100">${tweet.user.name}</span>
               <span class="text-xs text-zinc-500">@${tweet.user.username}</span>
             </div>
             <p class="text-xs text-zinc-300 mt-1">${tweet.content}</p>
+            ${imageElement}
           </div>
         `;
         listWrapper.appendChild(item);
@@ -2042,6 +2239,11 @@
       myTweets.forEach(tweet => {
         const item = document.createElement('div');
         item.className = 'p-4 hover:bg-white/10 transition flex gap-3 group';
+        const imageElement = tweet.image
+          ? `<div class="mt-2 rounded-2xl overflow-hidden glass-card max-h-72">
+               <img src="${tweet.image}" alt="post visual attachment" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+             </div>`
+          : '';
         item.innerHTML = `
           <img src="${tweet.user.avatar}" alt="me" class="w-10 h-10 rounded-full" />
           <div class="flex-1">
@@ -2055,6 +2257,7 @@
               </button>
             </div>
             <p class="mt-1 text-sm text-zinc-300">${tweet.content}</p>
+            ${imageElement}
           </div>
         `;
         container.appendChild(item);
@@ -2095,19 +2298,27 @@
         let avatar = currentUser.avatar;
         if (selectedAvatarFiles.profile) {
           btn.textContent = 'Uploading photo...';
-          avatar = await uploadImageFile(selectedAvatarFiles.profile, `avatars/${currentUser.uid}`);
+          avatar = await withTimeout(
+            uploadImageFile(selectedAvatarFiles.profile, `avatars/${currentUser.uid}`),
+            20000,
+            'Photo upload timed out. Check Firebase Storage rules/CORS for the avatars/ path and try again.'
+          );
           btn.textContent = 'Saving...';
         }
-        await fb.updateDoc(fb.doc(db, 'users', currentUser.uid), {
-          displayName: name || currentUser.displayName,
-          avatar: avatar,
-          bio
-        });
+        await withTimeout(
+          fb.updateDoc(fb.doc(db, 'users', currentUser.uid), {
+            displayName: name || currentUser.displayName,
+            avatar: avatar,
+            bio
+          }),
+          15000,
+          'Saving your profile timed out. Check your Firestore security rules for the users collection.'
+        );
         selectedAvatarFiles.profile = null;
         closeEditProfile();
         showToast('Profile updated');
       } catch (err) {
-        console.error(err);
+        console.error('Profile save failed:', err);
         showToast('Could not save profile: ' + err.message);
       } finally {
         btn.disabled = false; btn.textContent = 'Save';
