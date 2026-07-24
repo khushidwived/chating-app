@@ -503,7 +503,7 @@
                   <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
               </div>
-              <span class="text-[10px] text-zinc-500">From your device gallery · max 7MB</span>
+              <span class="text-[10px] text-zinc-500">From your device gallery · max 700KB</span>
             </div>
             <input type="file" id="composer-image-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'post')" />
             <div class="flex items-center justify-between border-t border-white/10 pt-3">
@@ -640,7 +640,7 @@
             </div>
             <button type="button" onclick="document.getElementById('edit-profile-avatar-file').click()" class="flex-1 photo-drop rounded-xl py-2.5 px-3 text-xs text-zinc-300 flex items-center justify-center gap-2">
               <i data-lucide="image-plus" class="w-4 h-4"></i>
-              <span>Choose new photo from gallery (max 7MB)</span>
+              <span>Choose new photo from gallery (max 700KB)</span>
             </button>
             <input type="file" id="edit-profile-avatar-file" accept="image/*" class="hidden" onchange="handleAvatarFileSelect(event, 'profile')" />
           </div>
@@ -770,7 +770,6 @@
     // ============================================================
     // FIREBASE CONFIG (from the user's project)
     // ============================================================
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
     const firebaseConfig = {
       apiKey: "AIzaSyAUeZzc0bixJsuwJNBW3cRY8U68iX5v-o4",
       authDomain: "twitter-5adc6.firebaseapp.com",
@@ -786,15 +785,15 @@
     // ============================================================
     // GLOBAL STATE
     // ============================================================
-    let app, auth, db, fb, storage, fbStorage; // fb = combined firebase auth+firestore function namespace; fbStorage = storage SDK namespace
-    let firebaseReady = false;   // becomes true once bootFirebase() succeeds
+    let app, auth, db, fb; 
+    let firebaseReady = false; 
 
-    // Photo-from-gallery upload state
-    const MAX_IMAGE_BYTES = 7 * 1024 * 1024; // 7MB hard limit for any user-uploaded photo
-    const selectedAvatarFiles = { signup: null, profile: null }; // holds File objects picked from device gallery, keyed by context
-    let selectedPostImageFile = null;   // File selected for the compose box
-    let currentUser = null;      // { uid, username, displayName, avatar, bio, following:[], blocked:[], bookmarks:[] }
-    let livePosts = null;        // null = still loading, array once first snapshot arrives
+    // Photo-from-gallery upload state (Base64 approach)
+    const MAX_IMAGE_BYTES = 700 * 1024; // 700KB limit to fit inside Firestore's 1MB limit
+    const selectedAvatarFiles = { signup: null, profile: null }; 
+    let selectedPostImageFile = null;   
+    let currentUser = null;      
+    let livePosts = null;        
     let followersCount = 0;
     let unsubscribePosts = null;
     let unsubscribeFollowers = null;
@@ -807,16 +806,16 @@
     let querySearchText = '';
 
     // ============================================================
-    // DIRECT MESSAGE STATE (real users, real-time via Firestore)
+    // DIRECT MESSAGE STATE 
     // ============================================================
-    let conversations = [];              // list of { id, otherUser:{uid,username,displayName,avatar}, lastMessage, lastMessageAt }
-    let activeConversationId = null;     // currently open conversation doc id
-    let activeConversationOtherUser = null; // { uid, username, displayName, avatar }
-    let activeConversationMessages = []; // messages in the open conversation
+    let conversations = [];              
+    let activeConversationId = null;     
+    let activeConversationOtherUser = null; 
+    let activeConversationMessages = []; 
     let unsubscribeConversations = null;
     let unsubscribeActiveMessages = null;
     let unsubscribeStories = null;
-    let allUsersCache = null;            // cached users list for username search
+    let allUsersCache = null;            
 
     const trends = [
       { category: 'Technology · Trending', topic: '#Gemini2.5', posts: '124K posts' },
@@ -826,7 +825,6 @@
       { category: 'AI Tools · Trending', topic: 'Canvas App Builder', posts: '45.1K posts' },
     ];
 
-    // FIX: ADDED MISSING BOT_PERSONAS ARRAY
     const BOT_PERSONAS = [
       { id: 'bot_support_1', name: 'Horizon Support', username: 'support', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=support' },
       { id: 'bot_news_2', name: 'Horizon News', username: 'news', avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=news' },
@@ -834,7 +832,7 @@
     ];
 
     // ============================================================
-    // TOASTS
+    // TOASTS & SAFETY RECOVERY
     // ============================================================
     function showToast(msg) {
       const stack = document.getElementById('toast-stack');
@@ -845,23 +843,55 @@
       setTimeout(() => el.remove(), 3500);
     }
 
-    // ============================================================
-    // PHOTO UPLOAD (from device gallery — no URL fields, 7MB max)
-    // ============================================================
+    function aidRecoverStuckButtons() {
+      ['btn-post-submit', 'save-profile-btn', 'add-story-btn', 'signup-submit-btn', 'signin-submit-btn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = false;
+      });
+      const icon = document.getElementById('add-story-icon');
+      const spinner = document.getElementById('add-story-spinner');
+      if (icon) icon.classList.remove('hidden');
+      if (spinner) spinner.classList.add('hidden');
+    }
 
-    // Validates a File picked from <input type="file">. Returns an error string, or null if OK.
+    window.addEventListener('error', function (e) {
+      console.error('Unhandled error:', e.error || e.message);
+      showToast('Something went wrong: ' + ((e.error && e.error.message) || e.message || 'unknown error'));
+      aidRecoverStuckButtons();
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      console.error('Unhandled promise rejection:', e.reason);
+      const detail = (e.reason && e.reason.message) ? e.reason.message : String(e.reason);
+      showToast('Something went wrong: ' + detail);
+      aidRecoverStuckButtons();
+    });
+
+    // ============================================================
+    // PHOTO UPLOAD (Base64 implementation)
+    // ============================================================
     function validateImageFile(file) {
       if (!file) return 'No file selected.';
       if (!file.type || !file.type.startsWith('image/')) return 'Please choose an image file.';
       if (file.size > MAX_IMAGE_BYTES) {
-        const mb = (file.size / (1024 * 1024)).toFixed(1);
-        return `That photo is ${mb}MB — please choose one under 7MB.`;
+        const kb = (file.size / 1024).toFixed(1);
+        return `That photo is ${kb}KB — please choose one under 700KB.`;
       }
       return null;
     }
 
-    // Shared handler wired to every "choose from gallery" <input type="file">.
-    // context is one of: 'signup', 'profile', 'post', 'story'
+    // Convert file to Base64 to bypass Firebase Storage and write straight to Firestore
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const error = validateImageFile(file);
+        if (error) return reject(new Error(error));
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
     function handleAvatarFileSelect(evt, context) {
       const input = evt.target;
       const file = input.files && input.files[0];
@@ -874,8 +904,6 @@
         return;
       }
 
-      // Stories never need a data-URL preview — start the upload right away
-      // instead of waiting on a FileReader pass that nobody reads.
       if (context === 'story') {
         uploadAndPostStory(file);
         return;
@@ -904,10 +932,6 @@
       reader.readAsDataURL(file);
     }
 
-    // Wraps a promise with a hard timeout. If the underlying network/SDK call
-    // never settles (hung Storage upload, blocked Firestore write, etc.) this
-    // forces a rejection after `ms` instead of letting the caller's UI spin
-    // forever. Always clears its own timer so it never leaks or fires late.
     function withTimeout(promise, ms, timeoutMessage) {
       let timer;
       const timeout = new Promise((_, reject) => {
@@ -916,36 +940,19 @@
       return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
     }
 
-    // Uploads a File to Firebase Storage under pathPrefix and returns its public download URL.
-    // Throws if the file fails validation or Storage isn't ready — callers should catch this.
-    async function uploadImageFile(file, pathPrefix) {
-      const error = validateImageFile(file);
-      if (error) throw new Error(error);
-      if (!storage || !fbStorage) throw new Error('Storage is not ready yet.');
-
-      const safeName = (file.name || 'photo').replace(/[^a-zA-Z0-9._-]/g, '_');
-      const path = `${pathPrefix}/${Date.now()}_${safeName}`;
-      const fileRef = fbStorage.ref(storage, path);
-      await fbStorage.uploadBytes(fileRef, file, { contentType: file.type });
-      return await fbStorage.getDownloadURL(fileRef);
-    }
-
     // ============================================================
     // FIREBASE BOOTSTRAP
     // ============================================================
     async function bootFirebase() {
       try {
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js");
-        const authMod = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js");
-        const fsMod = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
-        const storageMod = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js");
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js");
+        const authMod = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js");
+        const fsMod = await import("https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js");
 
         app = initializeApp(firebaseConfig);
         auth = authMod.getAuth(app);
         db = fsMod.getFirestore(app);
-        storage = storageMod.getStorage(app);
         fb = Object.assign({}, authMod, fsMod);
-        fbStorage = storageMod;
 
         firebaseReady = true;
         setAuthConnecting(false);
@@ -1069,7 +1076,7 @@
     }
 
     // ============================================================
-    // STORIES (photo-only, 24h expiry, following-only visibility)
+    // STORIES 
     // ============================================================
     function startStoriesListener() {
       if (!currentUser || !db) return;
@@ -1128,12 +1135,8 @@
       if (spinner) spinner.classList.remove('hidden');
 
       try {
-        showToast('Uploading story...');
-        const imageUrl = await withTimeout(
-          uploadImageFile(file, `stories/${currentUser.uid}`),
-          20000,
-          'Story upload timed out. This usually means Firebase Storage rules or CORS are blocking the request — check the console and Storage rules for the stories/ path.'
-        );
+        showToast('Processing story...');
+        const imageUrl = await getBase64(file);
 
         const now = new Date();
         const expires = new Date(now.getTime() + (24 * 60 * 60 * 1000));
@@ -1191,10 +1194,6 @@
       resetAuthSteps();
     }
 
-    // Advances a credential form (signin/signup) from its first step (email,
-    // plus name/username for signup) to its second step (password, etc).
-    // Uses native reportValidity() so required/type=email checks still apply
-    // even though these are plain buttons, not submit buttons.
     function aidNextStep(prefix) {
       const emailInput = document.getElementById(prefix + '-email');
       if (prefix === 'signup') {
@@ -1213,7 +1212,6 @@
       step1.classList.add('hidden'); step1.classList.remove('flex');
       step2.classList.remove('hidden'); step2.classList.add('flex');
 
-      // Restart the slide-in animation each time this step is (re)entered.
       step2.classList.remove('aid-step-anim');
       void step2.offsetWidth;
       step2.classList.add('aid-step-anim');
@@ -1229,8 +1227,6 @@
       step1.classList.remove('hidden'); step1.classList.add('flex');
     }
 
-    // Returns both the sign-in and create-account forms to their first step —
-    // called whenever the auth screen switches forms or is shown again after sign-out.
     function resetAuthSteps() {
       ['signin', 'signup'].forEach(prefix => {
         const step1 = document.getElementById(prefix + '-step-1');
@@ -1256,9 +1252,6 @@
       return (err && err.message) || 'Something went wrong. Please try again.';
     }
 
-    // Shows/hides a "connecting to server" state on both submit buttons and,
-    // while connecting, disables them so a click before Firebase has loaded
-    // can't fall through to a native (page-reloading) form submission.
     function setAuthConnecting(isConnecting) {
       const signinBtn = document.getElementById('signin-submit-btn');
       const signupBtn = document.getElementById('signup-submit-btn');
@@ -1277,10 +1270,6 @@
 
     function wireAuthForms() {
       document.getElementById('signin-form').addEventListener('submit', async e => {
-        // preventDefault must run first and unconditionally, otherwise a click
-        // that lands before Firebase is ready (or if init ever fails) causes a
-        // real HTML form submission, which just reloads the page with no
-        // feedback — that "nothing happens when I sign in" bug.
         e.preventDefault();
         setAuthError('');
 
@@ -1333,13 +1322,9 @@
           const cred = await fb.createUserWithEmailAndPassword(auth, email, password);
           let avatarUrl = DEFAULT_AVATAR_BASE + encodeURIComponent(username);
           if (avatarFile) {
-            btn.textContent = 'Uploading photo...';
+            btn.textContent = 'Processing photo...';
             try {
-              avatarUrl = await withTimeout(
-                uploadImageFile(avatarFile, `avatars/${cred.user.uid}`),
-                20000,
-                'Avatar upload timed out.'
-              );
+              avatarUrl = await getBase64(avatarFile);
             } catch (upErr) {
               console.error('Avatar upload failed', upErr);
               showToast('Could not upload photo, using default avatar instead.');
@@ -1359,8 +1344,6 @@
         }
       });
 
-      // Start in a "connecting" state right away since Firebase hasn't
-      // finished loading yet at the moment this function runs.
       setAuthConnecting(true);
     }
 
@@ -1379,8 +1362,6 @@
       try {
         const provider = new fb.GoogleAuthProvider();
         await fb.signInWithPopup(auth, provider);
-        // On success, handleAuthChange automatically runs, detecting the user
-        // and generating their Firestore profile document if it doesn't exist yet!
       } catch (err) {
         console.error('Google sign-in failed', err);
         setAuthError(friendlyAuthError(err));
@@ -1434,7 +1415,7 @@
       renderTrends();
       renderTrendsRecommendation();
       lucide.createIcons();
-      wireAuthForms();   // attach form handlers immediately, before Firebase finishes loading
+      wireAuthForms();   
       bootFirebase();
     };
 
@@ -1653,7 +1634,7 @@
     }
 
     // ============================================================
-    // POST ACTIONS (all persisted live to Firestore)
+    // POST ACTIONS
     // ============================================================
     async function createNewTweet() {
       if (!currentUser) return;
@@ -1666,12 +1647,8 @@
       try {
         let mediaUrl = null;
         if (selectedPostImageFile) {
-          btn.textContent = 'Uploading photo...';
-          mediaUrl = await withTimeout(
-            uploadImageFile(selectedPostImageFile, `posts/${currentUser.uid}`),
-            20000,
-            'Photo upload timed out. Check Firebase Storage rules/CORS for the posts/ path and try again.'
-          );
+          btn.textContent = 'Processing photo...';
+          mediaUrl = await getBase64(selectedPostImageFile);
           btn.textContent = 'Posting...';
         }
         await withTimeout(
@@ -1944,13 +1921,12 @@
     }
 
     // ============================================================
-    // DIRECT MESSAGES (real, private, real-time between real users)
+    // DIRECT MESSAGES 
     // ============================================================
     function conversationIdFor(uidA, uidB) {
       return [uidA, uidB].sort().join('__');
     }
 
-    // Render the list of existing conversations (left panel)
     function renderConversationList() {
       const container = document.getElementById('dm-conversation-list');
       if (!container || !currentUser) return;
@@ -1978,7 +1954,6 @@
       lucide.createIcons();
     }
 
-    // Search Firestore users by username / display name (used to start a new DM)
     async function searchUsersForMessage() {
       const input = document.getElementById('dm-user-search-input');
       const resultsContainer = document.getElementById('dm-search-results');
@@ -2035,7 +2010,6 @@
       });
     }
 
-    // Open (or create) a conversation given a target user's basic info — used by search results and Message buttons
     async function openConversationWithUser(uid, username, displayName, avatar) {
       if (!currentUser || uid === currentUser.uid) return;
       const convoId = conversationIdFor(currentUser.uid, uid);
@@ -2063,7 +2037,6 @@
       switchTab('messages');
     }
 
-    // Open an existing conversation by id and subscribe to its messages in real time
     function openConversation(convoId, otherUser) {
       activeConversationId = convoId;
       activeConversationOtherUser = otherUser;
@@ -2159,7 +2132,6 @@
       }
     }
 
-    // Mobile layout: toggle between the conversation list and the open chat
     function showMobileChatView(showChat) {
       const listPanel = document.getElementById('dm-list-panel');
       const chatPanel = document.getElementById('dm-chat-panel');
@@ -2176,7 +2148,7 @@
     }
 
     // ============================================================
-    // BOOKMARKS / PROFILE (live Firestore data)
+    // BOOKMARKS / PROFILE
     // ============================================================
     function renderBookmarks() {
       const container = document.getElementById('bookmarks-container');
@@ -2297,12 +2269,8 @@
       try {
         let avatar = currentUser.avatar;
         if (selectedAvatarFiles.profile) {
-          btn.textContent = 'Uploading photo...';
-          avatar = await withTimeout(
-            uploadImageFile(selectedAvatarFiles.profile, `avatars/${currentUser.uid}`),
-            20000,
-            'Photo upload timed out. Check Firebase Storage rules/CORS for the avatars/ path and try again.'
-          );
+          btn.textContent = 'Processing photo...';
+          avatar = await getBase64(selectedAvatarFiles.profile);
           btn.textContent = 'Saving...';
         }
         await withTimeout(
@@ -2347,7 +2315,6 @@
         container.appendChild(div);
       });
 
-      // FIX: The loop below now uses openConversationWithUser directly instead of selectActiveBot
       const followContainer = document.getElementById('right-follow-list');
       if (followContainer) {
         followContainer.innerHTML = '';
@@ -2388,8 +2355,7 @@
       document.getElementById('foryou-indicator').style.backgroundColor = hexCode;
       document.getElementById('following-indicator').style.backgroundColor = hexCode;
       switchTab(currentTab);
-      // Fixed potential undefined function call
-      if (typeof renderChatMessages === 'function') renderChatMessages();
+      if (typeof renderConversationMessages === 'function') renderConversationMessages();
     }
 
     // --- CUSTOMIZER: THEME BACKGROUND PROFILE ---
