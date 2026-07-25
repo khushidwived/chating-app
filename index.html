@@ -45,11 +45,12 @@
       --border: rgba(255,255,255,0.08);
       --border-soft: rgba(255,255,255,0.06);
       --text-muted: #8b8d94;
+      --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     * { -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; margin: 0; }
-    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-family: var(--font-ui); }
     button, a, [role="button"] { touch-action: manipulation; }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -183,6 +184,60 @@
     @media (prefers-reduced-motion: reduce) {
       #auth-overlay .aid-card, #auth-overlay .aid-step-anim { animation: none !important; }
     }
+
+    /* ===================== NEW: PREMIUM CUSTOMIZATION LAYER =====================
+       Everything below is additive and opt-in via body classes toggled from Settings,
+       so the default look/behavior of the app is completely unchanged. */
+
+    /* --- Reduced motion (manual toggle, mirrors the OS media query) --- */
+    body.pref-reduced-motion, body.pref-reduced-motion * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    /* --- Monochrome mode: desaturates everything except destructive red --- */
+    body.pref-monochrome img,
+    body.pref-monochrome .neu-accent,
+    body.pref-monochrome #post-btn-accent,
+    body.pref-monochrome .accent-bg-active,
+    body.pref-monochrome .accent-text-active {
+      filter: grayscale(1) contrast(1.05);
+    }
+    body.pref-monochrome [style*="background-color"] { filter: grayscale(1); }
+    body.pref-monochrome .text-sky-500,
+    body.pref-monochrome .text-sky-400,
+    body.pref-monochrome .bg-sky-500,
+    body.pref-monochrome .border-sky-500 {
+      filter: grayscale(1);
+    }
+    /* keep destructive red legible in monochrome mode */
+    body.pref-monochrome .text-red-400,
+    body.pref-monochrome .text-red-500,
+    body.pref-monochrome .hover\:text-red-500:hover,
+    body.pref-monochrome .hover\:text-red-400:hover {
+      filter: none !important;
+    }
+
+    /* --- Zen mode: hides vanity metrics, icons/actions remain fully usable --- */
+    body.pref-zen .zen-metric { display: none !important; }
+
+    /* --- Typeface presets --- */
+    body.font-editorial { --font-ui: "Georgia", "Iowan Old Style", "Times New Roman", serif; }
+    body.font-mono { --font-ui: "JetBrains Mono", "SF Mono", "Menlo", monospace; letter-spacing: -0.01em; }
+
+    /* --- Settings: toggle switch control --- */
+    .pref-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-soft); gap: 12px; }
+    .pref-toggle-row:last-child { border-bottom: none; }
+    .pref-toggle-label { display: flex; flex-direction: column; gap: 2px; }
+    .pref-switch { position: relative; width: 42px; height: 24px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); cursor: pointer; flex-shrink: 0; transition: background .15s ease; }
+    .pref-switch.on { background: var(--accent-color); border-color: var(--accent-color); }
+    .pref-switch .knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .15s ease; }
+    .pref-switch.on .knob { transform: translateX(18px); }
+    .pref-chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pref-chip { padding: 7px 13px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); color: #d4d4d8; cursor: pointer; transition: all .12s ease; }
+    .pref-chip.active { background: var(--accent-color); border-color: var(--accent-color); color: #fff; }
+
   </style>
 </head>
 <body class="bg-black text-gray-100 transition-colors duration-200 overflow-x-hidden font-sans">
@@ -688,7 +743,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="mb-6">
           <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">Background Profile</span>
           <div class="grid grid-cols-3 gap-3">
             <button onclick="changeTheme('light')" class="p-3 rounded-xl glass-card bg-white text-black flex flex-col items-center gap-2">
@@ -703,6 +758,40 @@
               <i data-lucide="shield" class="w-5 h-5 text-gray-400"></i>
               <span class="text-xs font-bold">Lights Out</span>
             </button>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-3">Typeface</span>
+          <div class="pref-chip-row" id="font-chip-row">
+            <button class="pref-chip active" data-font="default" onclick="changeFont('default')">Default (UI Sans)</button>
+            <button class="pref-chip" data-font="editorial" onclick="changeFont('editorial')">Editorial (Serif)</button>
+            <button class="pref-chip" data-font="mono" onclick="changeFont('mono')">Brutalist (Mono)</button>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 mb-6">
+          <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider block mb-1">Focus &amp; Wellness</span>
+          <div class="pref-toggle-row">
+            <div class="pref-toggle-label">
+              <span class="text-sm font-bold text-zinc-100">Zen mode</span>
+              <span class="text-xs text-zinc-500">Hide like/reply/repost counts — icons stay fully usable</span>
+            </div>
+            <div id="switch-zen" class="pref-switch" onclick="togglePref('zen')"><div class="knob"></div></div>
+          </div>
+          <div class="pref-toggle-row">
+            <div class="pref-toggle-label">
+              <span class="text-sm font-bold text-zinc-100">Monochrome mode</span>
+              <span class="text-xs text-zinc-500">Desaturate the UI, keep destructive actions in red</span>
+            </div>
+            <div id="switch-monochrome" class="pref-switch" onclick="togglePref('monochrome')"><div class="knob"></div></div>
+          </div>
+          <div class="pref-toggle-row">
+            <div class="pref-toggle-label">
+              <span class="text-sm font-bold text-zinc-100">Reduce motion</span>
+              <span class="text-xs text-zinc-500">Turn transitions and animations into instant cuts</span>
+            </div>
+            <div id="switch-reduced-motion" class="pref-switch" onclick="togglePref('reducedMotion')"><div class="knob"></div></div>
           </div>
         </div>
 
@@ -1417,6 +1506,7 @@
       renderTrendsRecommendation();
       lucide.createIcons();
       wireAuthForms();   
+      loadPrefs();
       bootFirebase();
     };
 
@@ -1601,15 +1691,15 @@
               <div class="flex justify-between max-w-md mt-3 text-zinc-500 text-xs">
                 <button onclick="toggleReplyField('${tweet.id}')" class="flex items-center gap-1.5 hover:text-sky-500 transition group">
                   <span class="p-1.5 rounded-full group-hover:bg-sky-500/10"><i data-lucide="message-circle" class="w-4 h-4"></i></span>
-                  <span>${tweet.replies}</span>
+                  <span class="zen-metric">${tweet.replies}</span>
                 </button>
                 <button onclick="toggleRepost('${tweet.id}')" class="flex items-center gap-1.5 hover:text-green-500 transition group ${tweet.retweetedByMe ? 'text-green-500' : ''}">
                   <span class="p-1.5 rounded-full group-hover:bg-green-500/10"><i data-lucide="repeat" class="w-4 h-4"></i></span>
-                  <span>${tweet.retweets}</span>
+                  <span class="zen-metric">${tweet.retweets}</span>
                 </button>
                 <button onclick="toggleLike('${tweet.id}')" class="flex items-center gap-1.5 hover:text-pink-500 transition group ${tweet.likedByMe ? 'text-pink-500 font-bold' : ''}">
                   <span class="p-1.5 rounded-full group-hover:bg-pink-500/10"><i data-lucide="heart" class="w-4 h-4" ${tweet.likedByMe ? 'fill="currentColor"' : ''}></i></span>
-                  <span>${tweet.likes}</span>
+                  <span class="zen-metric">${tweet.likes}</span>
                 </button>
                 <button onclick="toggleBookmark('${tweet.id}')" class="flex items-center gap-1.5 hover:text-sky-500 transition group ${tweet.bookmarkedByMe ? 'text-sky-500' : ''}">
                   <span class="p-1.5 rounded-full group-hover:bg-sky-500/10"><i data-lucide="bookmark" class="w-4 h-4" ${tweet.bookmarkedByMe ? 'fill="currentColor"' : ''}></i></span>
@@ -2357,6 +2447,7 @@
       document.getElementById('following-indicator').style.backgroundColor = hexCode;
       switchTab(currentTab);
       if (typeof renderConversationMessages === 'function') renderConversationMessages();
+      savePrefs();
     }
 
     // --- CUSTOMIZER: THEME BACKGROUND PROFILE ---
@@ -2364,7 +2455,9 @@
       currentThemeName = themeType;
       const body = document.body;
       const rightSearch = document.getElementById('right-search-input');
+      const keepClasses = ['pref-zen', 'pref-monochrome', 'pref-reduced-motion', 'font-editorial', 'font-mono'].filter(c => body.classList.contains(c));
       body.className = "transition-colors duration-200 overflow-x-hidden font-sans";
+      keepClasses.forEach(c => body.classList.add(c));
       body.style.backgroundColor = '';
       body.style.color = '';
 
@@ -2382,6 +2475,67 @@
         rightSearch.classList.add('bg-zinc-900', 'text-white');
         rightSearch.classList.remove('bg-slate-800', 'text-black');
       }
+      savePrefs();
+    }
+
+    // ============================================================
+    // NEW: PREMIUM CUSTOMIZATION — Zen / Monochrome / Reduced Motion / Fonts
+    // ============================================================
+    const PREFS_KEY = 'horizon_ui_prefs_v1';
+    let uiPrefs = { zen: false, monochrome: false, reducedMotion: false, font: 'default' };
+
+    function savePrefs() {
+      uiPrefs.accent = currentAccentColor;
+      uiPrefs.theme = currentThemeName;
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify(uiPrefs)); } catch (e) { /* storage unavailable, ignore */ }
+    }
+
+    function loadPrefs() {
+      try {
+        const raw = localStorage.getItem(PREFS_KEY);
+        if (raw) uiPrefs = Object.assign(uiPrefs, JSON.parse(raw));
+      } catch (e) { /* ignore malformed/missing prefs */ }
+
+      setSwitchState('switch-zen', uiPrefs.zen);
+      setSwitchState('switch-monochrome', uiPrefs.monochrome);
+      setSwitchState('switch-reduced-motion', uiPrefs.reducedMotion);
+      document.body.classList.toggle('pref-zen', !!uiPrefs.zen);
+      document.body.classList.toggle('pref-monochrome', !!uiPrefs.monochrome);
+      document.body.classList.toggle('pref-reduced-motion', !!uiPrefs.reducedMotion);
+      applyFontClass(uiPrefs.font || 'default');
+
+      if (uiPrefs.accent) changeAccent('custom', uiPrefs.accent);
+      if (uiPrefs.theme) changeTheme(uiPrefs.theme);
+    }
+
+    function setSwitchState(id, isOn) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('on', !!isOn);
+    }
+
+    function togglePref(key) {
+      uiPrefs[key] = !uiPrefs[key];
+      const idMap = { zen: 'switch-zen', monochrome: 'switch-monochrome', reducedMotion: 'switch-reduced-motion' };
+      const classMap = { zen: 'pref-zen', monochrome: 'pref-monochrome', reducedMotion: 'pref-reduced-motion' };
+      setSwitchState(idMap[key], uiPrefs[key]);
+      document.body.classList.toggle(classMap[key], uiPrefs[key]);
+      showToast(`${key === 'reducedMotion' ? 'Reduce motion' : key[0].toUpperCase() + key.slice(1)} ${uiPrefs[key] ? 'on' : 'off'}`);
+      savePrefs();
+    }
+
+    function applyFontClass(fontKey) {
+      document.body.classList.remove('font-editorial', 'font-mono');
+      if (fontKey === 'editorial') document.body.classList.add('font-editorial');
+      if (fontKey === 'mono') document.body.classList.add('font-mono');
+      document.querySelectorAll('#font-chip-row .pref-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.getAttribute('data-font') === fontKey);
+      });
+    }
+
+    function changeFont(fontKey) {
+      uiPrefs.font = fontKey;
+      applyFontClass(fontKey);
+      savePrefs();
     }
   </script>
 </body>
